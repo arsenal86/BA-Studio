@@ -1,0 +1,1 @@
+export type Page = 'home' | 'agent' | 'competencies' | 'templates' | 'assessment' | 'quiz' | 'recommendations' | 'news' | 'meeting';
