@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { generateWeeklyBriefing } from '../services/geminiService';
 
 declare var marked: {
     parse(markdown: string): string;
@@ -18,8 +17,22 @@ const LatestNewsPage: React.FC = () => {
         setBriefing('');
 
         try {
-            const result = await generateWeeklyBriefing();
-            setBriefing(result);
+            const response = await fetch('/.netlify/functions/gemini', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mode: 'generateWeeklyBriefing',
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setBriefing(data.result);
         } catch (err: any) {
             setError(`Failed to generate briefing: ${err.message}`);
         } finally {

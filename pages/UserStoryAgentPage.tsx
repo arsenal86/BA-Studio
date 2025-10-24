@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { analyzeUserStory } from '../services/geminiService';
 
 declare var marked: {
     parse(markdown: string): string;
@@ -39,8 +38,23 @@ const UserStoryAgentPage: React.FC = () => {
         setAnalysisResult('');
 
         try {
-            const result = await analyzeUserStory(userStory);
-            setAnalysisResult(result);
+            const response = await fetch('/.netlify/functions/gemini', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mode: 'analyzeUserStory',
+                    userStory: userStory,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setAnalysisResult(data.result);
         } catch (err: any) {
             setError(`Analysis failed: ${err.message}`);
         } finally {

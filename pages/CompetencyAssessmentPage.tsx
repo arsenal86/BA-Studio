@@ -1,6 +1,5 @@
 
 import React, { useState, useEffect, useRef } from 'react';
-import { generateDevelopmentPlan } from '../services/geminiService';
 import GuidanceModal from '../components/GuidanceModal';
 import { InformationCircleIcon } from '../components/icons';
 
@@ -69,10 +68,24 @@ const CompetencyAssessmentPage: React.FC = () => {
         setDevelopmentPlan('');
 
         try {
-            const result = await generateDevelopmentPlan(ratings);
-            setDevelopmentPlan(result);
-        } catch (err: any)
-{
+            const response = await fetch('/.netlify/functions/gemini', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    mode: 'generateDevelopmentPlan',
+                    ratings: ratings,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setDevelopmentPlan(data.result);
+        } catch (err: any) {
             setError(`Failed to generate plan: ${err.message}`);
         } finally {
             setIsLoading(false);
