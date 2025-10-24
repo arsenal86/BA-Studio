@@ -35,6 +35,17 @@ const App: React.FC = () => {
         }
     }, [isDarkMode]);
 
+    useEffect(() => {
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        const handleChange = (e: MediaQueryListEvent) => {
+            if (!('theme' in localStorage)) {
+                setIsDarkMode(e.matches);
+            }
+        };
+        mediaQuery.addEventListener('change', handleChange);
+        return () => mediaQuery.removeEventListener('change', handleChange);
+    }, []);
+
     const renderPage = () => {
         switch (currentPage) {
             case 'home':
