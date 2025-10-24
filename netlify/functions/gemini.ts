@@ -1,4 +1,6 @@
-import { GoogleGenAI } from "@google/genai";
+
+import { Handler } from '@netlify/functions';
+import { GoogleGenAI } from '@google/genai';
 
 const getAgentPrompt = () => `You are an expert Agile Business Analyst and User Story Coach. Your primary function is to act as a "definition of ready" gatekeeper. You will analyze user stories to ensure they are clear, valuable, and well-formed before they are presented to a development team.
 Your goal is to provide constructive, actionable feedback that helps refine the story to meet the highest standards of quality. You must be collaborative in your tone, aiming to coach and assist, not just to criticize.
@@ -219,7 +221,7 @@ const getApiKey = (): string => {
     return process.env.API_KEY;
 }
 
-export const analyzeUserStory = async (userStory: string): Promise<string> => {
+const analyzeUserStory = async (userStory: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
@@ -238,7 +240,7 @@ export const analyzeUserStory = async (userStory: string): Promise<string> => {
     return response.text;
 };
 
-export const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
+const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
@@ -259,7 +261,7 @@ export const generateDevelopmentPlan = async (ratings: { [key: string]: number }
     return response.text;
 };
 
-export const generateWeeklyBriefing = async (): Promise<string> => {
+const generateWeeklyBriefing = async (): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
@@ -277,7 +279,7 @@ export const generateWeeklyBriefing = async (): Promise<string> => {
     return response.text;
 };
 
-export const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
+const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
@@ -298,7 +300,7 @@ export const generateMeetingAgenda = async (topic: string, objectives: string, a
     return response.text;
 };
 
-export const summarizeMeetingNotes = async (notes: string): Promise<string> => {
+const summarizeMeetingNotes = async (notes: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
@@ -315,4 +317,51 @@ export const summarizeMeetingNotes = async (notes: string): Promise<string> => {
     });
 
     return response.text;
+};
+
+export const handler: Handler = async (event) => {
+    if (!event.body) {
+        return {
+            statusCode: 400,
+            body: JSON.stringify({ error: 'Missing request body' }),
+        };
+    }
+
+    try {
+        const { mode, ...params } = JSON.parse(event.body);
+        let result;
+
+        switch (mode) {
+            case 'analyzeUserStory':
+                result = await analyzeUserStory(params.userStory);
+                break;
+            case 'generateDevelopmentPlan':
+                result = await generateDevelopmentPlan(params.ratings);
+                break;
+            case 'generateWeeklyBriefing':
+                result = await generateWeeklyBriefing();
+                break;
+            case 'generateMeetingAgenda':
+                result = await generateMeetingAgenda(params.topic, params.objectives, params.attendees);
+                break;
+            case 'summarizeMeetingNotes':
+                result = await summarizeMeetingNotes(params.notes);
+                break;
+            default:
+                return {
+                    statusCode: 400,
+                    body: JSON.stringify({ error: 'Invalid mode' }),
+                };
+        }
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({ result }),
+        };
+    } catch (error: any) {
+        return {
+            statusCode: 500,
+            body: JSON.stringify({ error: error.message }),
+        };
+    }
 };

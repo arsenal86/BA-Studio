@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { generateMeetingAgenda, summarizeMeetingNotes } from '../services/geminiService';
 
 declare var marked: {
     parse(markdown: string): string;
@@ -55,19 +54,33 @@ const MeetingAssistantPage: React.FC = () => {
         setResult('');
 
         try {
-            let apiResult;
+            let body;
             if (mode === 'agenda') {
                 if (!topic.trim() || !objectives.trim()) {
                     throw new Error("Meeting topic and objectives are required.");
                 }
-                apiResult = await generateMeetingAgenda(topic, objectives, attendees);
+                body = { mode: 'generateMeetingAgenda', topic, objectives, attendees };
             } else {
-                 if (!notes.trim()) {
+                if (!notes.trim()) {
                     throw new Error("Meeting notes cannot be empty.");
                 }
-                apiResult = await summarizeMeetingNotes(notes);
+                body = { mode: 'summarizeMeetingNotes', notes };
             }
-            setResult(apiResult);
+
+            const response = await fetch('/.netlify/functions/gemini', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(body),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            setResult(data.result);
         } catch (err: any) {
             setError(`Failed to generate: ${err.message}`);
         } finally {
