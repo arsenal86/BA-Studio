@@ -214,15 +214,16 @@ Please analyze the following raw meeting notes and generate the summary in the f
 
 
 const getApiKey = (): string => {
-    // API_KEY is automatically injected by the environment
-    if (!process.env.API_KEY) {
-        throw new Error("API key is missing. Please make sure it is configured in your environment.");
+    const apiKey = process.env.API_KEY;
+    if (!apiKey) {
+        console.error("API_KEY environment variable not set.");
+        throw new Error("API key is missing. This is a server-side configuration issue.");
     }
-    return process.env.API_KEY;
+    return apiKey;
 }
 
 const analyzeUserStory = async (userStory: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
+    const ai = new GoogleGenAI(getApiKey());
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
@@ -241,7 +242,7 @@ const analyzeUserStory = async (userStory: string): Promise<string> => {
 };
 
 const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
+    const ai = new GoogleGenAI(getApiKey());
     const modelName = 'gemini-2.5-flash';
 
     const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
@@ -262,7 +263,7 @@ const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Prom
 };
 
 const generateWeeklyBriefing = async (): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
+    const ai = new GoogleGenAI(getApiKey());
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
@@ -280,7 +281,7 @@ const generateWeeklyBriefing = async (): Promise<string> => {
 };
 
 const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
+    const ai = new GoogleGenAI(getApiKey());
     const modelName = 'gemini-2.5-flash';
 
     const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
@@ -301,7 +302,7 @@ const generateMeetingAgenda = async (topic: string, objectives: string, attendee
 };
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
+    const ai = new GoogleGenAI(getApiKey());
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
@@ -359,9 +360,10 @@ export const handler: Handler = async (event) => {
             body: JSON.stringify({ result }),
         };
     } catch (error: any) {
+        console.error("Function handler error:", error);
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: error.message }),
+            body: JSON.stringify({ error: `An internal server error occurred: ${error.message}` }),
         };
     }
 };
