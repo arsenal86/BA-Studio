@@ -1,8 +1,5 @@
+import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
-
-declare var marked: {
-    parse(markdown: string): string;
-};
 
 type ToolMode = 'agenda' | 'summary';
 

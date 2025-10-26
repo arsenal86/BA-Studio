@@ -1,9 +1,6 @@
 
+import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
-
-declare var marked: {
-    parse(markdown: string): string;
-};
 
 const LatestNewsPage: React.FC = () => {
     const [briefing, setBriefing] = useState('');

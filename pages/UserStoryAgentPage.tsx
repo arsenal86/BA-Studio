@@ -1,9 +1,6 @@
 
+import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
-
-declare var marked: {
-    parse(markdown: string): string;
-};
 
 const ExampleStory: React.FC<{ text: string; onClick: (text: string) => void }> = ({ text, onClick }) => (
     <button

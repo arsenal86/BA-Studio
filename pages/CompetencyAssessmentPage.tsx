@@ -1,11 +1,8 @@
 
+import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
 import GuidanceModal from '../components/GuidanceModal';
 import { InformationCircleIcon } from '../components/icons';
-
-declare var marked: {
-    parse(markdown: string): string;
-};
 
 const competencies = [
     "Requirements Elicitation",
