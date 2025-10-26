@@ -11,7 +11,8 @@
     ],
     "skipLibCheck": true,
     "types": [
-      "node"
+      "node",
+      "vitest"
     ],
     "moduleResolution": "bundler",
     "isolatedModules": true,
@@ -26,4 +27,10 @@
     "allowImportingTsExtensions": true,
     "noEmit": true
   }
+    ,
+    "exclude": [
+      "src/test",
+      "src/test/**",
+      "vitest.config.ts"
+    ]
 }

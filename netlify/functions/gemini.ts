@@ -213,17 +213,20 @@ Please analyze the following raw meeting notes and generate the summary in the f
 `;
 
 
+// Retrieve API key from environment. Prefer GEMINI_API_KEY (used in Netlify env),
+// but fall back to API_KEY for compatibility with other deploy setups.
 const getApiKey = (): string => {
-    const apiKey = process.env.API_KEY;
+    const apiKey = process.env.GEMINI_API_KEY ?? process.env.API_KEY;
     if (!apiKey) {
-        console.error("API_KEY environment variable not set.");
-        throw new Error("API key is missing. This is a server-side configuration issue.");
+        console.error("Missing API key environment variable. Expected GEMINI_API_KEY or API_KEY.");
+        throw new Error("API key is missing. Set the GEMINI_API_KEY (preferred) or API_KEY environment variable in your deployment.");
     }
+    // Do not log the key value to avoid leaking secrets in logs.
     return apiKey;
 }
 
 const analyzeUserStory = async (userStory: string): Promise<string> => {
-    const ai = new GoogleGenAI(getApiKey());
+    const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
@@ -242,7 +245,7 @@ const analyzeUserStory = async (userStory: string): Promise<string> => {
 };
 
 const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
-    const ai = new GoogleGenAI(getApiKey());
+    const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
     const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
@@ -263,7 +266,7 @@ const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Prom
 };
 
 const generateWeeklyBriefing = async (): Promise<string> => {
-    const ai = new GoogleGenAI(getApiKey());
+    const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
@@ -281,7 +284,7 @@ const generateWeeklyBriefing = async (): Promise<string> => {
 };
 
 const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
-    const ai = new GoogleGenAI(getApiKey());
+    const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
     const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
@@ -302,7 +305,7 @@ const generateMeetingAgenda = async (topic: string, objectives: string, attendee
 };
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
-    const ai = new GoogleGenAI(getApiKey());
+    const ai = new GoogleGenAI({ apiKey: getApiKey() });
     const modelName = 'gemini-2.5-flash';
 
     const contents = [
