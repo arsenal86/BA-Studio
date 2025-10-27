@@ -2,24 +2,21 @@
 import { render, screen } from '@testing-library/react';
 import App from '../../App';
 import { vi } from 'vitest';
+import MatchMediaMock from 'vitest-matchmedia-mock';
 
 describe('App', () => {
-  it('renders in dark mode when prefers-color-scheme is dark', () => {
-    // Mock the matchMedia API
-    Object.defineProperty(window, 'matchMedia', {
-      writable: true,
-      value: vi.fn().mockImplementation(query => ({
-        matches: query === '(prefers-color-scheme: dark)',
-        media: query,
-        onchange: null,
-        addListener: vi.fn(), // deprecated
-        removeListener: vi.fn(), // deprecated
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-        dispatchEvent: vi.fn(),
-      })),
-    });
+  let matchMedia: MatchMediaMock;
 
+  beforeEach(() => {
+    matchMedia = new MatchMediaMock();
+  });
+
+  afterEach(() => {
+    matchMedia.clear();
+  });
+
+  it('renders in dark mode when prefers-color-scheme is dark', () => {
+    matchMedia.useMediaQuery('(prefers-color-scheme: dark)');
     render(<App />);
 
     // Check that the dark class is applied to the root element
