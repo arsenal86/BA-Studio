@@ -1,6 +1,7 @@
 
 import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 
 const LatestNewsPage: React.FC = () => {
     const [briefing, setBriefing] = useState('');
@@ -39,7 +40,8 @@ const LatestNewsPage: React.FC = () => {
 
     useEffect(() => {
         if (briefing && outputRef.current) {
-            outputRef.current.innerHTML = marked.parse(briefing);
+            const sanitizedHtml = DOMPurify.sanitize(marked.parse(briefing));
+            outputRef.current.innerHTML = sanitizedHtml;
         }
     }, [briefing]);
 

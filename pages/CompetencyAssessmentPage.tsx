@@ -1,6 +1,7 @@
 
 import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 import GuidanceModal from '../components/GuidanceModal';
 import { InformationCircleIcon } from '../components/icons';
 
@@ -91,7 +92,8 @@ const CompetencyAssessmentPage: React.FC = () => {
 
     useEffect(() => {
         if (developmentPlan && outputRef.current) {
-            outputRef.current.innerHTML = marked.parse(developmentPlan);
+            const sanitizedHtml = DOMPurify.sanitize(marked.parse(developmentPlan));
+            outputRef.current.innerHTML = sanitizedHtml;
         }
     }, [developmentPlan]);
     

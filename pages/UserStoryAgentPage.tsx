@@ -1,6 +1,7 @@
 
 import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 
 const ExampleStory: React.FC<{ text: string; onClick: (text: string) => void }> = ({ text, onClick }) => (
     <button
@@ -61,7 +62,8 @@ const UserStoryAgentPage: React.FC = () => {
     
     useEffect(() => {
         if (analysisResult && outputRef.current) {
-            outputRef.current.innerHTML = marked.parse(analysisResult);
+            const sanitizedHtml = DOMPurify.sanitize(marked.parse(analysisResult));
+            outputRef.current.innerHTML = sanitizedHtml;
         }
     }, [analysisResult]);
 

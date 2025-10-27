@@ -1,5 +1,6 @@
 import { marked } from 'marked';
 import React, { useState, useEffect, useRef } from 'react';
+import DOMPurify from 'dompurify';
 
 type ToolMode = 'agenda' | 'summary';
 
@@ -87,7 +88,8 @@ const MeetingAssistantPage: React.FC = () => {
     
     useEffect(() => {
         if (result && outputRef.current) {
-            outputRef.current.innerHTML = marked.parse(result);
+            const sanitizedHtml = DOMPurify.sanitize(marked.parse(result));
+            outputRef.current.innerHTML = sanitizedHtml;
         }
     }, [result]);
 
