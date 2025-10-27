@@ -1,6 +1,4 @@
 import React from 'react';
-import logoLight from '../assets/logo-light.png';
-import logoDark from '../assets/logo-dark.png';
 
 const iconProps = {
     className: "h-6 w-6",
@@ -11,14 +9,14 @@ export const Logo = () => (
   <>
     {/* Light mode logo (visible when NOT in .dark mode) */}
     <img
-      src={logoLight}
+      src="/assets/logo-light.png"
       alt="BA Studio Logo - light"
       className="block dark:hidden h-8 w-auto object-contain"
     />
 
     {/* Dark mode logo (visible when .dark is present) */}
     <img
-      src={logoDark}
+      src="/assets/logo-dark.png"
       alt="BA Studio Logo - dark"
       className="hidden dark:block h-8 w-auto object-contain"
     />
