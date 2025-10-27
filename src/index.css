@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  :root {
+    --gradient-start: #4f46e5;
+    --gradient-end: #db2777;
+  }
+
+  .dark {
+    --gradient-start: #a5b4fc;
+    --gradient-end: #f9a8d4;
+  }
+}
+
+@layer utilities {
+  .text-gradient-themed {
+    background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+}
