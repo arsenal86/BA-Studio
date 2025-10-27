@@ -11,7 +11,7 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     return (
         <div className="animate-fade-in">
             <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white">Welcome to <span className="bg-gradient-to-r from-primary-500 to-accent-400 bg-clip-text text-transparent">BA Studio</span></h1>
+                <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white">Welcome to <span className="text-gradient-themed">BA Studio</span></h1>
                 <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">Your all-in-one platform for Business Analyst essentials, powered by cutting-edge AI.</p>
             </div>
 
