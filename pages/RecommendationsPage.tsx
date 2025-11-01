@@ -40,7 +40,7 @@ const RecommendationsPage: React.FC = () => {
                     title="BABOK Guide v3"
                     author="IIBA"
                     description="The globally recognized standard for the practice of business analysis. An essential reference."
-                    href="https://www.iiba.org/professional-development/babbok/"
+                    href="https://www.iiba.org/career-resources/a-business-analysis-professionals-foundation-for-success/babok/"
                 />
                 <ResourceCard 
                     title="User Stories Applied"
@@ -128,7 +128,7 @@ const RecommendationsPage: React.FC = () => {
                 <ResourceCard 
                     title="Inside Business Analysis"
                     description="Listen to the real-world stories of how business analysis is carried out and delivered."
-                    href="https://www.iiba.org/business-analysis-podcasts/inside-business-analysis-podcast/"
+                    href="https://www.youtube.com/@InsideBusinessAnalysis"
                 />
                  <ResourceCard 
                     title="Mastering Business Analysis"
