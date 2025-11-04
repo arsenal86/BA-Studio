@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Page } from './types';
+import { Routes, Route, Link } from 'react-router-dom';
 import Sidebar from './components/Sidebar';
 import HomePage from './pages/HomePage';
 import CoreCompetenciesPage from './pages/CoreCompetenciesPage';
@@ -10,11 +10,11 @@ import KnowledgeQuizPage from './pages/KnowledgeQuizPage';
 import RecommendationsPage from './pages/RecommendationsPage';
 import LatestNewsPage from './pages/LatestNewsPage';
 import MeetingAssistantPage from './pages/MeetingAssistantPage';
+import NotFoundPage from './pages/NotFoundPage';
 import Footer from './components/Footer';
 import { MenuIcon, CloseIcon, Logo } from './components/icons';
 
 const App: React.FC = () => {
-    const [currentPage, setCurrentPage] = useState<Page>('home');
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     // Dark mode toggle logic
@@ -46,42 +46,9 @@ const App: React.FC = () => {
         return () => mediaQuery.removeEventListener('change', handleChange);
     }, []);
 
-    const renderPage = () => {
-        switch (currentPage) {
-            case 'home':
-                return <HomePage navigate={setCurrentPage} />;
-            case 'agent':
-                return <UserStoryAgentPage />;
-            case 'competencies':
-                return <CoreCompetenciesPage />;
-            case 'templates':
-                return <ToolsAndTemplatesPage />;
-            case 'assessment':
-                return <CompetencyAssessmentPage />;
-            case 'quiz':
-                return <KnowledgeQuizPage />;
-            case 'recommendations':
-                return <RecommendationsPage />;
-            case 'news':
-                return <LatestNewsPage />;
-            case 'meeting':
-                return <MeetingAssistantPage />;
-            default:
-                return <HomePage navigate={setCurrentPage} />;
-        }
-    };
-    
-    const handleLogoClick = (e: React.MouseEvent) => {
-        e.preventDefault();
-        setCurrentPage('home');
-        setIsSidebarOpen(false);
-    };
-
     return (
         <div className="flex h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
             <Sidebar 
-                currentPage={currentPage} 
-                setCurrentPage={setCurrentPage}
                 isSidebarOpen={isSidebarOpen}
                 setIsSidebarOpen={setIsSidebarOpen}
                 isDarkMode={isDarkMode}
@@ -90,16 +57,27 @@ const App: React.FC = () => {
 
             <div className="flex-1 flex flex-col overflow-hidden">
                 <header className="md:hidden bg-white dark:bg-slate-800 shadow-md p-4 flex justify-between items-center z-20">
-                    <a href="#" onClick={handleLogoClick} className="h-8 block" aria-label="Go to homepage">
+                    <Link to="/" onClick={() => setIsSidebarOpen(false)} className="h-8 block" aria-label="Go to homepage">
                        <Logo />
-                    </a>
+                    </Link>
                     <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="text-slate-600 dark:text-slate-300">
                         {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
                     </button>
                 </header>
 
                 <main className="flex-1 overflow-x-hidden overflow-y-auto p-4 md:p-8">
-                    {renderPage()}
+                    <Routes>
+                        <Route path="/" element={<HomePage />} />
+                        <Route path="/agent" element={<UserStoryAgentPage />} />
+                        <Route path="/competencies" element={<CoreCompetenciesPage />} />
+                        <Route path="/templates" element={<ToolsAndTemplatesPage />} />
+                        <Route path="/assessment" element={<CompetencyAssessmentPage />} />
+                        <Route path="/quiz" element={<KnowledgeQuizPage />} />
+                        <Route path="/recommendations" element={<RecommendationsPage />} />
+                        <Route path="/news" element={<LatestNewsPage />} />
+                        <Route path="/meeting" element={<MeetingAssistantPage />} />
+                        <Route path="*" element={<NotFoundPage />} />
+                    </Routes>
                 </main>
                 <Footer />
             </div>
