@@ -1,13 +1,11 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import FeatureCard from '../components/FeatureCard';
-import { Page } from '../types';
 import { LightBulbIcon, DocumentTextIcon, TemplateIcon, ChartBarIcon, QuestionMarkCircleIcon, SparklesIcon, NewspaperIcon, ClipboardListIcon } from '../components/icons';
 
-interface HomePageProps {
-    navigate: (page: Page) => void;
-}
+const HomePage: React.FC = () => {
+    const navigate = useNavigate();
 
-const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
     return (
         <div className="animate-fade-in">
             <div className="text-center mb-12">
@@ -20,49 +18,49 @@ const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
                     title="User Story Agent"
                     description="Leverage AI to analyze, score, and refine your user stories against industry best practices."
                     icon={<LightBulbIcon />}
-                    onClick={() => navigate('agent')}
+                    onClick={() => navigate('/agent')}
                 />
                  <FeatureCard 
                     title="Meeting Assistant"
                     description="Generate structured agendas and summarize your meeting notes to extract key actions."
                     icon={<ClipboardListIcon />}
-                    onClick={() => navigate('meeting')}
+                    onClick={() => navigate('/meeting')}
                 />
                  <FeatureCard 
                     title="Latest News"
                     description="Get your AI-powered weekly intelligence briefing on BA trends, tools, and techniques."
                     icon={<NewspaperIcon />}
-                    onClick={() => navigate('news')}
+                    onClick={() => navigate('/news')}
                 />
                 <FeatureCard 
                     title="Competency Assessment"
                     description="Get a personalized development plan from our AI coach based on your self-assessed skills."
                     icon={<ChartBarIcon />}
-                    onClick={() => navigate('assessment')}
+                    onClick={() => navigate('/assessment')}
                 />
                  <FeatureCard 
                     title="Knowledge Quiz"
                     description="Test your understanding of core BA concepts with our interactive, multiple-choice quiz."
                     icon={<QuestionMarkCircleIcon />}
-                    onClick={() => navigate('quiz')}
+                    onClick={() => navigate('/quiz')}
                 />
                 <FeatureCard 
                     title="Core Competencies"
                     description="Explore fundamental BA skills, from requirements elicitation to stakeholder management."
                     icon={<DocumentTextIcon />}
-                    onClick={() => navigate('competencies')}
+                    onClick={() => navigate('/competencies')}
                 />
                 <FeatureCard 
                     title="Tools & Templates"
                     description="Access a curated collection of downloadable templates like BRDs and Use Case documents."
                     icon={<TemplateIcon />}
-                    onClick={() => navigate('templates')}
+                    onClick={() => navigate('/templates')}
                 />
                  <FeatureCard 
                     title="Curated Recommendations"
                     description="Explore essential books, websites, podcasts, and industry leaders to follow."
                     icon={<SparklesIcon />}
-                    onClick={() => navigate('recommendations')}
+                    onClick={() => navigate('/recommendations')}
                 />
             </div>
         </div>
