@@ -2,6 +2,8 @@
 import { Handler } from '@netlify/functions';
 import { GoogleGenAI } from '@google/genai';
 
+const GEMINI_MODEL_NAME = 'gemini-1.5-pro';
+
 const getAgentPrompt = () => `You are an expert Agile Business Analyst and User Story Coach. Your primary function is to act as a "definition of ready" gatekeeper. You will analyze user stories to ensure they are clear, valuable, and well-formed before they are presented to a development team.
 Your goal is to provide constructive, actionable feedback that helps refine the story to meet the highest standards of quality. You must be collaborative in your tone, aiming to coach and assist, not just to criticize.
 
@@ -227,7 +229,7 @@ const getApiKey = (): string => {
 
 const analyzeUserStory = async (userStory: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+    const modelName = GEMINI_MODEL_NAME;
 
     const contents = [
         { role: "user", parts: [{ text: getAgentPrompt() }] },
@@ -246,7 +248,7 @@ const analyzeUserStory = async (userStory: string): Promise<string> => {
 
 const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+    const modelName = GEMINI_MODEL_NAME;
 
     const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
 
@@ -267,7 +269,7 @@ const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Prom
 
 const generateWeeklyBriefing = async (): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+    const modelName = GEMINI_MODEL_NAME;
 
     const contents = [
         { role: "user", parts: [{ text: getWeeklyBriefingPrompt() }] },
@@ -285,7 +287,7 @@ const generateWeeklyBriefing = async (): Promise<string> => {
 
 const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+    const modelName = GEMINI_MODEL_NAME;
 
     const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
 
@@ -306,7 +308,7 @@ const generateMeetingAgenda = async (topic: string, objectives: string, attendee
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
     const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+    const modelName = GEMINI_MODEL_NAME;
 
     const contents = [
         { role: "user", parts: [{ text: getMeetingSummaryPrompt() }] },
