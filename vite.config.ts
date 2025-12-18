@@ -41,8 +41,7 @@ export default defineConfig(({ mode }) => {
       },
       plugins,
       define: {
-        'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-        'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+        // Explicitly removed API key injection to prevent secret leakage in client bundle
       },
       resolve: {
         alias: {
