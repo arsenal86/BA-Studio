@@ -337,18 +337,30 @@ export const handler: Handler = async (event) => {
 
         switch (mode) {
             case 'analyzeUserStory':
+                if (!params.userStory) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Missing userStory parameter' }) };
+                }
                 result = await analyzeUserStory(params.userStory);
                 break;
             case 'generateDevelopmentPlan':
+                if (!params.ratings) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Missing ratings parameter' }) };
+                }
                 result = await generateDevelopmentPlan(params.ratings);
                 break;
             case 'generateWeeklyBriefing':
                 result = await generateWeeklyBriefing();
                 break;
             case 'generateMeetingAgenda':
+                if (!params.topic || !params.objectives || !params.attendees) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Missing one or more required parameters: topic, objectives, attendees' }) };
+                }
                 result = await generateMeetingAgenda(params.topic, params.objectives, params.attendees);
                 break;
             case 'summarizeMeetingNotes':
+                if (!params.notes) {
+                    return { statusCode: 400, body: JSON.stringify({ error: 'Missing notes parameter' }) };
+                }
                 result = await summarizeMeetingNotes(params.notes);
                 break;
             default:
@@ -364,9 +376,11 @@ export const handler: Handler = async (event) => {
         };
     } catch (error: any) {
         console.error("Function handler error:", error);
+        // Securely handle the error: log the details for debugging, but return a generic message to the client
+        // to avoid leaking sensitive information (like stack traces, API keys in headers, or internal paths).
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: `An internal server error occurred: ${error.message}` }),
+            body: JSON.stringify({ error: 'An internal server error occurred.' }),
         };
     }
 };
