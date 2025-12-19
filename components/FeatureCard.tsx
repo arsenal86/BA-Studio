@@ -13,9 +13,9 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ title, description, icon, onC
         <button
             type="button"
             onClick={onClick}
-            className="w-full bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 cursor-pointer border border-slate-200 dark:border-slate-700"
+            className="w-full bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg hover:shadow-2xl hover:-translate-y-2 transform transition-all duration-300 cursor-pointer border border-slate-200 dark:border-slate-700 text-left group"
         >
-            <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary-100 dark:bg-slate-900 mb-4 mx-auto text-primary-600 dark:text-primary-400">
+            <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary-100 dark:bg-slate-900 mb-4 mx-auto text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300">
                 {icon}
             </div>
             <h3 className="text-xl font-bold text-center text-slate-800 dark:text-white mb-2">{title}</h3>
