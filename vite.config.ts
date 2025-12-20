@@ -1,6 +1,6 @@
-import path from 'path';
-import { defineConfig, loadEnv } from 'vite';
-import react from '@vitejs/plugin-react';
+import path from "path";
+import { defineConfig, loadEnv } from "vite";
+import react from "@vitejs/plugin-react";
 
 const clarityScript = `
   <script type="text/javascript">
@@ -12,41 +12,43 @@ const clarityScript = `
   </script>
 `;
 
-function viteClarityPlugin() {
+import { Plugin } from "vite";
+
+function viteClarityPlugin(): Plugin {
   return {
-    name: 'vite-plugin-ms-clarity-manual',
+    name: "vite-plugin-ms-clarity-manual",
     transformIndexHtml(html) {
-      return html.replace('</head>', `${clarityScript}</head>`);
+      return html.replace("</head>", `${clarityScript}</head>`);
     },
   };
 }
 
 export default defineConfig(({ mode }) => {
-    const env = loadEnv(mode, '.', '');
-    const plugins = [react()];
-    if (mode === 'production') {
-      plugins.push(viteClarityPlugin());
-    }
-    return {
-      base: '/',
-      server: {
-        port: 3001,
-        host: '0.0.0.0',
-        proxy: {
-          '/.netlify/functions': {
-            target: 'http://localhost:8888',
-            changeOrigin: true,
-          },
+  const env = loadEnv(mode, ".", "");
+  const plugins = [react()];
+  if (mode === "production") {
+    plugins.push(viteClarityPlugin() as any);
+  }
+  return {
+    base: "/",
+    server: {
+      port: 3001,
+      host: "0.0.0.0",
+      proxy: {
+        "/.netlify/functions": {
+          target: "http://localhost:8888",
+          changeOrigin: true,
         },
       },
-      plugins,
-      define: {
-        // Explicitly removed API key injection to prevent secret leakage in client bundle
+    },
+    plugins,
+    define: {
+      // Explicitly removed API key injection to prevent secret leakage in client bundle
+    },
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "."),
       },
-      resolve: {
-        alias: {
-          '@': path.resolve(__dirname, '.'),
-        }
-      }
-    };
+    },
+  };
 });
