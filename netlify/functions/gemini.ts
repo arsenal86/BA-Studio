@@ -337,18 +337,25 @@ export const handler: Handler = async (event) => {
 
         switch (mode) {
             case 'analyzeUserStory':
+                if (!params.userStory) throw new Error('Missing parameter: userStory');
                 result = await analyzeUserStory(params.userStory);
                 break;
             case 'generateDevelopmentPlan':
+                if (!params.ratings) throw new Error('Missing parameter: ratings');
                 result = await generateDevelopmentPlan(params.ratings);
                 break;
             case 'generateWeeklyBriefing':
+                // No params required
                 result = await generateWeeklyBriefing();
                 break;
             case 'generateMeetingAgenda':
+                if (!params.topic || !params.objectives || !params.attendees) {
+                    throw new Error('Missing parameters: topic, objectives, or attendees');
+                }
                 result = await generateMeetingAgenda(params.topic, params.objectives, params.attendees);
                 break;
             case 'summarizeMeetingNotes':
+                if (!params.notes) throw new Error('Missing parameter: notes');
                 result = await summarizeMeetingNotes(params.notes);
                 break;
             default:
@@ -364,9 +371,19 @@ export const handler: Handler = async (event) => {
         };
     } catch (error: any) {
         console.error("Function handler error:", error);
+
+        // Return explicit error for known validation issues (parameter missing)
+        if (error.message.startsWith('Missing parameter')) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({ error: error.message }),
+            };
+        }
+
+        // Generic error for everything else to avoid leaking internal details
         return {
             statusCode: 500,
-            body: JSON.stringify({ error: `An internal server error occurred: ${error.message}` }),
+            body: JSON.stringify({ error: 'An internal server error occurred.' }),
         };
     }
 };
