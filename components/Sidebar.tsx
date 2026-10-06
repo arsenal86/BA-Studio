@@ -12,8 +12,9 @@ import {
   SparklesIcon,
   NewspaperIcon,
   ClipboardListIcon,
-  Logo,
 } from './icons';
+import BrandLogo from './BrandLogo';
+import { Button, cx } from './ui';
 
 interface SidebarProps {
   currentPage: Page;
@@ -23,6 +24,18 @@ interface SidebarProps {
   isDarkMode: boolean;
   setIsDarkMode: (isDark: boolean) => void;
 }
+
+const navItems: { page: Page; label: string; Icon: typeof HomeIcon }[] = [
+  { page: 'home', label: 'Home', Icon: HomeIcon },
+  { page: 'agent', label: 'User story agent', Icon: LightBulbIcon },
+  { page: 'meeting', label: 'Meeting assistant', Icon: ClipboardListIcon },
+  { page: 'news', label: 'Latest news', Icon: NewspaperIcon },
+  { page: 'assessment', label: 'Assessment', Icon: ChartBarIcon },
+  { page: 'quiz', label: 'Knowledge quiz', Icon: QuestionMarkCircleIcon },
+  { page: 'competencies', label: 'Core competencies', Icon: DocumentTextIcon },
+  { page: 'templates', label: 'Templates', Icon: TemplateIcon },
+  { page: 'recommendations', label: 'Recommendations', Icon: SparklesIcon },
+];
 
 const NavLink: React.FC<{
   page: Page;
@@ -35,18 +48,22 @@ const NavLink: React.FC<{
   return (
     <a
       href="#"
+      aria-current={isActive ? 'page' : undefined}
       onClick={(e) => {
         e.preventDefault();
         onClick(page);
       }}
-      className={`flex items-center px-4 py-3 text-lg rounded-lg transition-colors duration-200 ${
+      className={cx(
+        'flex items-center gap-4 rounded-md px-4 py-2 text-body transition-colors',
         isActive
-          ? 'bg-primary-600 text-white font-semibold shadow-lg'
-          : 'text-slate-600 dark:text-slate-300 hover:bg-primary-100 dark:hover:bg-slate-700'
-      }`}
+          ? 'bg-surface-200 font-semibold text-brand-mid'
+          : 'text-ink hover:bg-surface-200'
+      )}
     >
-      {icon}
-      <span className="ml-4">{label}</span>
+      <span className={isActive ? 'text-brand-mid' : 'text-brand-teal'}>
+        {icon}
+      </span>
+      <span>{label}</span>
     </a>
   );
 };
@@ -72,97 +89,53 @@ const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        className={cx(
+          'fixed inset-0 z-30 bg-overlay transition-opacity md:hidden',
+          isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        )}
         onClick={() => setIsSidebarOpen(false)}
       ></div>
       <aside
-        className={`absolute md:relative z-40 w-64 bg-white dark:bg-slate-800 shadow-xl h-full flex-shrink-0 flex flex-col transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}
+        className={cx(
+          'absolute z-40 flex h-full w-64 flex-shrink-0 flex-col border-r border-divider bg-surface-100 transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
+          isSidebarOpen ? 'translate-x-0 shadow-overlay' : '-translate-x-full'
+        )}
       >
-        <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-center items-center">
+        <div className="flex items-center justify-center border-b border-divider p-6">
           <a
             href="#"
             onClick={handleLogoClick}
-            className="h-10 block"
+            className="block rounded-sm"
             aria-label="Go to homepage"
           >
-            <Logo />
+            <BrandLogo className="h-24" />
           </a>
         </div>
-        <nav className="flex-1 p-4 space-y-2">
-          <NavLink
-            page="home"
-            label="Home"
-            icon={<HomeIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="agent"
-            label="User Story Agent"
-            icon={<LightBulbIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="meeting"
-            label="Meeting Assistant"
-            icon={<ClipboardListIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="news"
-            label="Latest News"
-            icon={<NewspaperIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="assessment"
-            label="Assessment"
-            icon={<ChartBarIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="quiz"
-            label="Knowledge Quiz"
-            icon={<QuestionMarkCircleIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="competencies"
-            label="Core Competencies"
-            icon={<DocumentTextIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="templates"
-            label="Templates"
-            icon={<TemplateIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
-          <NavLink
-            page="recommendations"
-            label="Recommendations"
-            icon={<SparklesIcon />}
-            currentPage={currentPage}
-            onClick={handleNavigation}
-          />
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {navItems.map(({ page, label, Icon }) => (
+            <NavLink
+              key={page}
+              page={page}
+              label={label}
+              icon={<Icon />}
+              currentPage={currentPage}
+              onClick={handleNavigation}
+            />
+          ))}
         </nav>
-        <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-          <button
+        <div className="border-t border-divider p-4">
+          <Button
+            variant="secondary"
+            fullWidth
             onClick={() => setIsDarkMode(!isDarkMode)}
-            className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
           >
-            {isDarkMode ? <SunIcon /> : <MoonIcon />}
-            <span className="ml-3 text-slate-700 dark:text-slate-200">
-              {isDarkMode ? 'Light Mode' : 'Dark Mode'}
-            </span>
-          </button>
+            {isDarkMode ? (
+              <SunIcon className="h-5 w-5" />
+            ) : (
+              <MoonIcon className="h-5 w-5" />
+            )}
+            {isDarkMode ? 'Light mode' : 'Dark mode'}
+          </Button>
         </div>
       </aside>
     </>

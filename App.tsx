@@ -11,7 +11,8 @@ import RecommendationsPage from './pages/RecommendationsPage';
 import LatestNewsPage from './pages/LatestNewsPage';
 import MeetingAssistantPage from './pages/MeetingAssistantPage';
 import Footer from './components/Footer';
-import { MenuIcon, CloseIcon, Logo } from './components/icons';
+import { MenuIcon, CloseIcon } from './components/icons';
+import { Wordmark } from './components/BrandLogo';
 
 const App: React.FC = () => {
   const [currentPage, setCurrentPage] = useState<Page>('home');
@@ -82,7 +83,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans">
+    <div className="flex h-screen bg-surface-100 text-ink font-sans">
       <Sidebar
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
@@ -93,18 +94,19 @@ const App: React.FC = () => {
       />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <header className="md:hidden bg-white dark:bg-slate-800 shadow-md p-4 flex justify-between items-center z-20">
+        <header className="md:hidden bg-surface-100 border-b border-divider p-4 flex justify-between items-center z-20">
           <a
             href="#"
             onClick={handleLogoClick}
-            className="h-8 block"
+            className="block rounded-sm"
             aria-label="Go to homepage"
           >
-            <Logo />
+            <Wordmark />
           </a>
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="text-slate-600 dark:text-slate-300"
+            aria-label={isSidebarOpen ? 'Close menu' : 'Open menu'}
+            className="rounded-sm text-ink"
           >
             {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
           </button>

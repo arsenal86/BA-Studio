@@ -1,20 +1,22 @@
-import React from 'react';
+// Line icons (Heroicons v1 outline). Colour comes from currentColor:
+// use brand-teal or ink, at 20-24px, per the design system.
+interface IconProps {
+  className?: string;
+}
 
-const iconProps = {
-  className: 'h-6 w-6',
+const iconProps = (className = 'h-6 w-6') => ({
+  className,
   strokeWidth: 2,
-};
+  'aria-hidden': true,
+});
 
-export const Logo = () => (
-  <img
-    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMjAgODIiPjxkZWZzPjxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZGllbnQtMiIgeDE9IjQ3MS42NiIgeTE9IjMuMzkiIHgyPSI0NzEuNjYiIHkyPSI4MC41MyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCguNDEsIDAsIDAsIC45OCwgLTIyMi43MSwgLTEuNTUpIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjNWNlNmY4Ii8+PHN0b3Agb2Zmc2V0PSIxIiBzdG9wLWNvbG9yPSIjMDNiZGU5Ii8+PC9saW5lYXJHcmFkaWVudD48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWRpZW50IiB4MT0iNDk3LjY4IiB5MT0iMTguMzkiIHgyPSI0OTcuNjgiIHkyPSI4MS42NyIgZ3JhZGllbnRUcmFuc2Zvcm09Im1hdHJpeCguMzgsIDAsIDAsIC44OSwgLTI4Ny4zNCwgLTE0LjkyKSIgZ3JhZGllbnRVbml0cz0idXNlclNwYWNlT25Vc2UiPjxzdG9wIG9mZnNldD0iMCIgc3RvcC1jb2xvcj0iIzY5NTNmMiIvPjxzdG9wIG9mZnNldD0iMSIgc3RvcC1jb2xvcj0iIzVhNGVlYiIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxwb2x5Z29uIHBvaW50cz0iNjYuNjcgMzUuMTggNDcuNTQgMzUuMTggMzEuNjkgNTEuMDQgNDcuNTQgNTEuMDQgNjYuNjcgMzUuMTgiIGZpbGw9IiMyNDI4NTUiLz48cG9seWdvbiBwb2ludHM9IjEyNi4wNyAzNS4xOCAxMDYuOTUgMzUuMTggNjEuMjUgODEuODcgNzYuNDUgODEuODcgMTI2LjA3IDM1LjE4IiBmaWxsPSIjNDg0ODk4Ii8+PHBvbHlnb24gcG9pbnRzPSI4NC40NSAzMy43MiA0OS4yMSAzMy43MiA0MC4yOCA0Mi42NSA3MS4wNiA0Mi42NSA4NC40NSAzMy43MiIgZmlsbD0iIzM2NzNkOCIvPjxwb2x5Z29uIHBvaW50cz0iMTEzLjQyIDQuMTMgMTA2LjI0IDExLjMxIDEyNC45NyAzMCAxMzIuMTUgMjIuODIgMTEzLjQyIDQuMTMiIHN0eWxlPSJmaWxsOnVybCgjZ3JhZGllbnQtMikiLz48cGF0aCBkPSJtMTI0Ljk3LDMwbC01Ljk2LDQuMDhjLTMuNDQsMi4zNS0zLjc0LDYuNzYtMi4xMSw5LjY4bDYuNSw5LjQ2YzEuNjMsMi45MSw1LDEuODUsNS43Ny0xLjVsMi4zMy0xMC41Yy43Ny0zLjMzLTEuMjQtNS45NS00LjM4LTYuNDNsLTQuMjYtLjczIiBzdHlsZT0iZmlsbDojY2RjZWNkIi8+PHBhdGggZD0ibTEwOC43Nyw0NC42MmMtLjQ3LTEuNDQtMS4yMi0xLjQ0LTEuNjksMGwtNS45MywxOC4wNGMtLjQ3LDEuNDQsMS4wOCwyLjUyLDEuOTUsMS4zOGw0LjM3LTUuNzJjLjg4LTEuMTUsMi40My0xLjE1LDIuODQsMGw0LjM3LDUuNzJjLjg4LDEuMDgsMi40My0uNDEsMS45NS0xLjM4bC01LjkyLTE4LjA0IiBzdHlsZT0iZmlsbDojY2RjZWNkIi8+PHBhdGggZD0ibTg4LjQsNDEuMmMtMy4zMy0uNzctNS45NSwxLjI0LTYuNDMsNC4zOGwtLjczLDQuMjZjLTIuMzUsMy40NC0yLjA1LDcuODYtLjg4LDExLjFsNy4yMiwxNC45NGMyLjMzLDUuMjUsOC4yOCw2LjYxLDEyLjY3LDMuNDFsMTMuMDQtOS43M2MyLjY0LTEuOTcsMy43NC01LjI1LDIuNTYtOC4yOGwtNy4yMi0xOC4wNGMtMS4xNy0yLjkyLTQuMDctNC4zOC03LjIyLTMuNjNsLTEwLjU5LDIuNTYiIHN0eWxlPSJmaWxsOnVybCgjZ3JhZGllbnQpIi8+PC9zdmc+"
-    alt="BA Studio Logo"
-    className="h-full w-auto object-contain"
-  />
-);
-
-export const HomeIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const HomeIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -23,8 +25,13 @@ export const HomeIcon = () => (
   </svg>
 );
 
-export const LightBulbIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const LightBulbIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -33,8 +40,13 @@ export const LightBulbIcon = () => (
   </svg>
 );
 
-export const DocumentTextIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const DocumentTextIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -43,8 +55,13 @@ export const DocumentTextIcon = () => (
   </svg>
 );
 
-export const TemplateIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const TemplateIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -53,8 +70,13 @@ export const TemplateIcon = () => (
   </svg>
 );
 
-export const MenuIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const MenuIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -63,8 +85,13 @@ export const MenuIcon = () => (
   </svg>
 );
 
-export const CloseIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const CloseIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -73,8 +100,13 @@ export const CloseIcon = () => (
   </svg>
 );
 
-export const SunIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const SunIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -83,8 +115,13 @@ export const SunIcon = () => (
   </svg>
 );
 
-export const MoonIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const MoonIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -93,8 +130,13 @@ export const MoonIcon = () => (
   </svg>
 );
 
-export const ChartBarIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const ChartBarIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -103,8 +145,13 @@ export const ChartBarIcon = () => (
   </svg>
 );
 
-export const InformationCircleIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const InformationCircleIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -113,8 +160,13 @@ export const InformationCircleIcon = () => (
   </svg>
 );
 
-export const QuestionMarkCircleIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const QuestionMarkCircleIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -123,8 +175,13 @@ export const QuestionMarkCircleIcon = () => (
   </svg>
 );
 
-export const SparklesIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const SparklesIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -133,8 +190,13 @@ export const SparklesIcon = () => (
   </svg>
 );
 
-export const NewspaperIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const NewspaperIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -143,8 +205,13 @@ export const NewspaperIcon = () => (
   </svg>
 );
 
-export const ClipboardListIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const ClipboardListIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -153,14 +220,19 @@ export const ClipboardListIcon = () => (
   </svg>
 );
 
-export const XIcon = () => (
-  <svg {...iconProps} fill="currentColor" viewBox="0 0 24 24">
+export const XIcon = ({ className }: IconProps) => (
+  <svg {...iconProps(className)} fill="currentColor" viewBox="0 0 24 24">
     <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
   </svg>
 );
 
-export const ExternalLinkIcon = () => (
-  <svg {...iconProps} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+export const ExternalLinkIcon = ({ className }: IconProps) => (
+  <svg
+    {...iconProps(className)}
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+  >
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
