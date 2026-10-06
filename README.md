@@ -99,7 +99,8 @@ Trigger a deploy. Netlify will build the project and deploy the site and serverl
 │ ├── test/ # Test files
 │ ├── App.tsx # Main application component and routing logic
 │ ├── main.tsx # Application entry point
-│ └── index.css # Main CSS file with Tailwind directives
+│ ├── index.css # Tailwind v4 entry: token mapping, type scale, markdown styles
+│ └── styles/tokens.css # BA Studio UK design tokens (light and dark)
 ├──.env.example # Example environment file
 ├──.gitignore # Files to be ignored by Git
 ├── index.html # Main HTML entry file

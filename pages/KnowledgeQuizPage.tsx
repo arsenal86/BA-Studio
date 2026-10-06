@@ -1,4 +1,5 @@
 import React, { useState, useMemo } from 'react';
+import { Alert, Button, Card, PageHeader, cx } from '../components/ui';
 
 interface QuizQuestion {
   question: string;
@@ -48,19 +49,19 @@ const quizData: QuizQuestion[] = [
     ],
     correctAnswer: 'Surveys/Questionnaires',
     explanation:
-      'Surveys are an excellent tool for collecting standardized information from a large number of people, regardless of their location.',
+      'Surveys are an excellent tool for collecting standardised information from a large number of people, regardless of their location.',
   },
   {
     question: "The 'Power/Interest Grid' is a model used for what purpose?",
     options: [
-      'Analyzing project risks',
+      'Analysing project risks',
       'Prioritizing stakeholders',
-      'Modeling business processes',
+      'Modelling business processes',
       'Estimating user stories',
     ],
     correctAnswer: 'Prioritizing stakeholders',
     explanation:
-      'The Power/Interest Grid helps categorize stakeholders based on their level of influence (power) and level of concern (interest) to determine how to manage them.',
+      'The Power/Interest Grid helps categorise stakeholders based on their level of influence (power) and level of concern (interest) to determine how to manage them.',
   },
   {
     question: "What does the 'T' in INVEST stand for?",
@@ -84,6 +85,33 @@ const quizData: QuizQuestion[] = [
   },
 ];
 
+type OptionState = {
+  isSelected: boolean;
+  isCorrect: boolean;
+  showFeedback: boolean;
+};
+
+/**
+ * Classes for one answer option, before and after the answer is checked.
+ * Right and wrong differ in weight and tint as well as hue, so the state does
+ * not rely on telling red from green.
+ */
+const optionClasses = ({
+  isSelected,
+  isCorrect,
+  showFeedback,
+}: OptionState): string => {
+  if (!showFeedback) {
+    return isSelected
+      ? 'border-brand-mid bg-surface-100 font-semibold text-ink'
+      : 'border-divider bg-surface-100 text-ink hover:border-brand-mid';
+  }
+  if (isCorrect)
+    return 'border-success bg-success-surface font-semibold text-ink';
+  if (isSelected) return 'border-danger bg-danger-surface text-ink';
+  return 'border-divider bg-surface-100 text-ink-muted';
+};
+
 const KnowledgeQuizPage: React.FC = () => {
   const [shuffledQuestions] = useState(() =>
     [...quizData].sort(() => Math.random() - 0.5)
@@ -106,7 +134,6 @@ const KnowledgeQuizPage: React.FC = () => {
 
   const handleCheckAnswer = () => {
     if (!selectedAnswer) return;
-
     if (selectedAnswer === currentQuestion.correctAnswer) {
       setScore((prev) => prev + 1);
     }
@@ -116,7 +143,6 @@ const KnowledgeQuizPage: React.FC = () => {
   const handleNextQuestion = () => {
     setShowFeedback(false);
     setSelectedAnswer(null);
-
     if (currentQuestionIndex < shuffledQuestions.length - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
     } else {
@@ -135,66 +161,49 @@ const KnowledgeQuizPage: React.FC = () => {
 
   if (quizFinished) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center animate-fade-in">
-        <div className="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg w-full max-w-md">
-          <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-4">
-            Quiz Complete!
-          </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-300 mb-6">
-            You scored{' '}
-            <span className="font-bold text-primary-600 dark:text-primary-400">
-              {score}
-            </span>{' '}
+      <div className="flex h-full flex-col items-center justify-center text-center animate-fade-in">
+        <Card className="w-full max-w-md">
+          <h2 className="mb-4 text-h2 text-brand-navy">Quiz complete</h2>
+          <p className="mb-6 text-body text-ink">
+            You scored <span className="font-bold text-brand-mid">{score}</span>{' '}
             out of <span className="font-bold">{shuffledQuestions.length}</span>
           </p>
-          <button
-            onClick={handleRestart}
-            className="w-full bg-primary-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+          <Button fullWidth onClick={handleRestart}>
+            Try again
+          </Button>
+        </Card>
       </div>
     );
   }
 
+  const isLastQuestion = currentQuestionIndex === shuffledQuestions.length - 1;
+
   return (
-    <div className="animate-fade-in max-w-3xl mx-auto">
-      <h1 className="text-4xl font-bold mb-2 text-slate-900 dark:text-white">
-        BA Knowledge Quiz
-      </h1>
-      <p className="text-lg text-slate-600 dark:text-slate-400 mb-8">
-        Question {currentQuestionIndex + 1} of {shuffledQuestions.length}
-      </p>
+    <div className="mx-auto max-w-3xl animate-fade-in">
+      <PageHeader
+        title="BA knowledge quiz"
+        eyebrow={`Question ${currentQuestionIndex + 1} of ${shuffledQuestions.length}`}
+      />
 
-      <div className="bg-white dark:bg-slate-800 p-8 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-        <h2 className="text-2xl font-semibold mb-6 text-slate-800 dark:text-slate-200">
-          {currentQuestion.question}
-        </h2>
-
-        <div className="space-y-4">
+      <Card>
+        <h2 className="mb-6 text-h3 text-ink">{currentQuestion.question}</h2>
+        <div className="space-y-4" role="radiogroup" aria-label="Answers">
           {currentQuestion.options.map((option) => {
             const isSelected = selectedAnswer === option;
             const isCorrect = currentQuestion.correctAnswer === option;
-            let buttonClass =
-              'bg-slate-100 dark:bg-slate-700 hover:bg-primary-100 dark:hover:bg-slate-600';
-            if (showFeedback) {
-              if (isCorrect) {
-                buttonClass = 'bg-green-200 dark:bg-green-800 border-green-500';
-              } else if (isSelected) {
-                buttonClass = 'bg-red-200 dark:bg-red-800 border-red-500';
-              }
-            } else if (isSelected) {
-              buttonClass =
-                'bg-primary-200 dark:bg-primary-800 border-primary-500';
-            }
-
             return (
               <button
                 key={option}
+                type="button"
+                role="radio"
+                aria-checked={isSelected}
                 onClick={() => handleAnswerSelect(option)}
                 disabled={showFeedback}
-                className={`w-full text-left p-4 rounded-lg border-2 transition-all duration-200 ${buttonClass} ${showFeedback ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                className={cx(
+                  'w-full rounded-md border-2 p-4 text-left text-body transition-colors',
+                  optionClasses({ isSelected, isCorrect, showFeedback }),
+                  showFeedback ? 'cursor-default' : 'cursor-pointer'
+                )}
               >
                 {option}
               </button>
@@ -203,37 +212,35 @@ const KnowledgeQuizPage: React.FC = () => {
         </div>
 
         {showFeedback && (
-          <div className="mt-6 p-4 bg-blue-50 dark:bg-slate-700 rounded-lg border border-blue-200 dark:border-blue-600 animate-fade-in">
-            <h3 className="font-bold text-blue-800 dark:text-blue-200">
-              Explanation
-            </h3>
-            <p className="text-blue-700 dark:text-blue-300 mt-1">
-              {currentQuestion.explanation}
-            </p>
-          </div>
+          <Alert
+            variant={
+              selectedAnswer === currentQuestion.correctAnswer
+                ? 'success'
+                : 'error'
+            }
+            title={
+              selectedAnswer === currentQuestion.correctAnswer
+                ? 'Correct'
+                : 'Not quite'
+            }
+            className="mt-6 animate-fade-in"
+          >
+            {currentQuestion.explanation}
+          </Alert>
         )}
 
-        <div className="mt-8 text-right">
+        <div className="mt-8 flex justify-end">
           {!showFeedback ? (
-            <button
-              onClick={handleCheckAnswer}
-              disabled={!selectedAnswer}
-              className="px-8 py-3 bg-primary-600 text-white font-bold rounded-lg hover:bg-primary-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-colors"
-            >
-              Check Answer
-            </button>
+            <Button onClick={handleCheckAnswer} disabled={!selectedAnswer}>
+              Check answer
+            </Button>
           ) : (
-            <button
-              onClick={handleNextQuestion}
-              className="px-8 py-3 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition-colors animate-pulse"
-            >
-              {currentQuestionIndex < shuffledQuestions.length - 1
-                ? 'Next Question'
-                : 'Finish Quiz'}
-            </button>
+            <Button onClick={handleNextQuestion}>
+              {isLastQuestion ? 'Finish quiz' : 'Next question'}
+            </Button>
           )}
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
