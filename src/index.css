@@ -1,24 +1,224 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import './styles/tokens.css';
 
-@layer base {
-  :root {
-    --gradient-start: #4f46e5;
-    --gradient-end: #db2777;
+/* Theme is driven by the .dark class on <html> (see index.html and App.tsx). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Map BA Studio UK tokens onto Tailwind utilities.
+ * Only design-system colours exist: Tailwind's default palette is switched off,
+ * so classes like bg-slate-100 or text-red-500 generate nothing.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-mid: var(--brand-mid);
+  --color-brand-teal: var(--brand-teal);
+  --color-ink: var(--ink);
+  --color-ink-muted: var(--ink-muted);
+  --color-surface-100: var(--surface-100);
+  --color-surface-200: var(--surface-200);
+  --color-divider: var(--divider);
+  --color-on-brand: var(--on-brand);
+  --color-danger: var(--danger);
+  --color-danger-surface: var(--danger-surface);
+  --color-success: var(--success);
+  --color-success-surface: var(--success-surface);
+  --color-overlay: var(--overlay);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --shadow-overlay: var(--shadow-overlay);
+}
+
+@theme {
+  --font-sans: Montserrat, 'Helvetica Neue', Arial, sans-serif;
+
+  /* Type scale: text-display, text-h1 … text-label */
+  --text-display: 56px;
+  --text-display--line-height: 60px;
+  --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.01em;
+  --text-h1: 40px;
+  --text-h1--line-height: 48px;
+  --text-h1--font-weight: 700;
+  --text-h2: 28px;
+  --text-h2--line-height: 36px;
+  --text-h2--font-weight: 700;
+  --text-h3: 20px;
+  --text-h3--line-height: 28px;
+  --text-h3--font-weight: 600;
+  --text-body: 16px;
+  --text-body--line-height: 26px;
+  --text-body--font-weight: 400;
+  --text-small: 14px;
+  --text-small--line-height: 20px;
+  --text-small--font-weight: 400;
+  --text-label: 12px;
+  --text-label--line-height: 16px;
+  --text-label--font-weight: 600;
+  --text-label--letter-spacing: 0.16em;
+
+  /* Radius */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-pill: 999px;
+
+  /* App-local motion */
+  --animate-fade-in: fade-in 0.4s ease-out both;
+  --animate-modal-in: modal-in 0.25s ease-out both;
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
   }
 
-  .dark {
-    --gradient-start: #a5b4fc;
-    --gradient-end: #f9a8d4;
+  @keyframes modal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.97) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--surface-100);
+    color: var(--ink);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-mid);
+    outline-offset: 2px;
+  }
+
+  input[type='range'] {
+    accent-color: var(--brand-mid);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
 
 @layer utilities {
-  .text-gradient-themed {
-    background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+  /* Brand gradient: hero moments only (design system rule). */
+  .text-gradient-brand {
+    background-image: linear-gradient(
+      to right,
+      var(--brand-navy),
+      var(--brand-teal)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
+  }
+}
+
+/* Rendered markdown from the AI tools, mapped to the type scale. */
+@layer components {
+  .markdown-output {
+    color: var(--ink);
+    font-size: 16px;
+    line-height: 26px;
+  }
+  .markdown-output > * + * {
+    margin-top: 16px;
+  }
+  .markdown-output h1,
+  .markdown-output h2 {
+    color: var(--brand-navy);
+    font-size: 28px;
+    line-height: 36px;
+    font-weight: 700;
+    margin-top: 32px;
+  }
+  .markdown-output h3,
+  .markdown-output h4 {
+    color: var(--brand-navy);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+    margin-top: 24px;
+  }
+  .markdown-output > :first-child {
+    margin-top: 0;
+  }
+  .markdown-output strong {
+    font-weight: 600;
+  }
+  .markdown-output a {
+    color: var(--brand-mid);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .markdown-output ul,
+  .markdown-output ol {
+    padding-left: 24px;
+  }
+  .markdown-output ul {
+    list-style: disc;
+  }
+  .markdown-output ol {
+    list-style: decimal;
+  }
+  .markdown-output li + li {
+    margin-top: 4px;
+  }
+  .markdown-output li::marker {
+    color: var(--ink-muted);
+  }
+  .markdown-output blockquote {
+    border-left: 2px solid var(--divider);
+    padding-left: 16px;
+    color: var(--ink-muted);
+  }
+  .markdown-output code {
+    font-size: 14px;
+    background: var(--surface-200);
+    border-radius: var(--radius-sm);
+    padding: 1px 4px;
+  }
+  .markdown-output pre {
+    background: var(--surface-200);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    overflow-x: auto;
+  }
+  .markdown-output pre code {
+    padding: 0;
+  }
+  .markdown-output hr {
+    border-color: var(--divider);
+  }
+  .markdown-output table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  .markdown-output th,
+  .markdown-output td {
+    border-bottom: 1px solid var(--divider);
+    padding: 8px;
+    text-align: left;
+  }
+  .markdown-output th {
+    font-weight: 600;
   }
 }

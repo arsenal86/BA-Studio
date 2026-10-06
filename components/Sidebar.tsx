@@ -1,76 +1,129 @@
 import React from 'react';
 import { NavLink as RouterNavLink, Link } from 'react-router-dom';
-import { HomeIcon, LightBulbIcon, DocumentTextIcon, TemplateIcon, SunIcon, MoonIcon, ChartBarIcon, QuestionMarkCircleIcon, SparklesIcon, NewspaperIcon, ClipboardListIcon, Logo } from './icons';
+import {
+  HomeIcon,
+  LightBulbIcon,
+  DocumentTextIcon,
+  TemplateIcon,
+  SunIcon,
+  MoonIcon,
+  ChartBarIcon,
+  QuestionMarkCircleIcon,
+  SparklesIcon,
+  NewspaperIcon,
+  ClipboardListIcon,
+} from './icons';
+import BrandLogo from './BrandLogo';
+import { Button, cx } from './ui';
 
 interface SidebarProps {
-    isSidebarOpen: boolean;
-    setIsSidebarOpen: (isOpen: boolean) => void;
-    isDarkMode: boolean;
-    setIsDarkMode: (isDark: boolean) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
+  isDarkMode: boolean;
+  setIsDarkMode: (isDark: boolean) => void;
 }
 
-const CustomNavLink: React.FC<{
-    to: string;
-    label: string;
-    icon: React.ReactNode;
-    onClick: () => void;
-}> = ({ to, label, icon, onClick }) => {
-    return (
-        <RouterNavLink
-            to={to}
-            onClick={onClick}
-            className={({ isActive }) =>
-                `flex items-center px-4 py-3 text-lg rounded-lg transition-colors duration-200 ${
-                    isActive
-                        ? 'bg-primary-600 text-white font-semibold shadow-lg'
-                        : 'text-slate-600 dark:text-slate-300 hover:bg-primary-100 dark:hover:bg-slate-700'
-                }`
-            }
-        >
-            {icon}
-            <span className="ml-4">{label}</span>
-        </RouterNavLink>
-    );
-};
+const navItems: { to: string; label: string; Icon: typeof HomeIcon }[] = [
+  { to: '/', label: 'Home', Icon: HomeIcon },
+  { to: '/agent', label: 'User story agent', Icon: LightBulbIcon },
+  { to: '/meeting', label: 'Meeting assistant', Icon: ClipboardListIcon },
+  { to: '/news', label: 'Latest news', Icon: NewspaperIcon },
+  { to: '/assessment', label: 'Assessment', Icon: ChartBarIcon },
+  { to: '/quiz', label: 'Knowledge quiz', Icon: QuestionMarkCircleIcon },
+  { to: '/competencies', label: 'Core competencies', Icon: DocumentTextIcon },
+  { to: '/templates', label: 'Templates', Icon: TemplateIcon },
+  { to: '/recommendations', label: 'Recommendations', Icon: SparklesIcon },
+];
 
-const Sidebar: React.FC<SidebarProps> = ({ isSidebarOpen, setIsSidebarOpen, isDarkMode, setIsDarkMode }) => {
-    
-    const handleNavigation = () => {
-        setIsSidebarOpen(false); // Close sidebar on mobile after navigation
-    };
+const NavLink: React.FC<{
+  to: string;
+  label: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+}> = ({ to, label, icon, onClick }) => (
+  <RouterNavLink
+    to={to}
+    end={to === '/'}
+    onClick={onClick}
+    className={({ isActive }) =>
+      cx(
+        'group flex items-center gap-4 rounded-md px-4 py-2 text-body transition-colors',
+        isActive
+          ? 'active bg-surface-200 font-semibold text-brand-mid'
+          : 'text-ink hover:bg-surface-200'
+      )
+    }
+  >
+    <span className="text-brand-teal group-[.active]:text-brand-mid">
+      {icon}
+    </span>
+    <span>{label}</span>
+  </RouterNavLink>
+);
 
-    return (
-        <>
-            <div className={`fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity ${isSidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} onClick={() => setIsSidebarOpen(false)}></div>
-            <aside className={`absolute md:relative z-40 w-64 bg-white dark:bg-slate-800 shadow-xl h-full flex-shrink-0 flex flex-col transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-                <div className="p-6 border-b border-slate-200 dark:border-slate-700 flex justify-center items-center">
-                    <Link to="/" onClick={handleNavigation} className="h-10 block" aria-label="Go to homepage">
-                       <Logo />
-                    </Link>
-                </div>
-                <nav className="flex-1 p-4 space-y-2">
-                    <CustomNavLink to="/" label="Home" icon={<HomeIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/agent" label="User Story Agent" icon={<LightBulbIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/meeting" label="Meeting Assistant" icon={<ClipboardListIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/news" label="Latest News" icon={<NewspaperIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/assessment" label="Assessment" icon={<ChartBarIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/quiz" label="Knowledge Quiz" icon={<QuestionMarkCircleIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/competencies" label="Core Competencies" icon={<DocumentTextIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/templates" label="Templates" icon={<TemplateIcon />} onClick={handleNavigation} />
-                    <CustomNavLink to="/recommendations" label="Recommendations" icon={<SparklesIcon />} onClick={handleNavigation} />
-                </nav>
-                <div className="p-4 border-t border-slate-200 dark:border-slate-700">
-                     <button
-                        onClick={() => setIsDarkMode(!isDarkMode)}
-                        className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 transition-colors"
-                    >
-                        {isDarkMode ? <SunIcon /> : <MoonIcon />}
-                        <span className="ml-3 text-slate-700 dark:text-slate-200">{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
-                    </button>
-                </div>
-            </aside>
-        </>
-    );
+const Sidebar: React.FC<SidebarProps> = ({
+  isSidebarOpen,
+  setIsSidebarOpen,
+  isDarkMode,
+  setIsDarkMode,
+}) => {
+  const handleNavigation = () => {
+    setIsSidebarOpen(false); // Close sidebar on mobile after navigation
+  };
+
+  return (
+    <>
+      <div
+        className={cx(
+          'fixed inset-0 z-30 bg-overlay transition-opacity md:hidden',
+          isSidebarOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+        )}
+        onClick={() => setIsSidebarOpen(false)}
+      ></div>
+      <aside
+        className={cx(
+          'absolute z-40 flex h-full w-64 flex-shrink-0 flex-col border-r border-divider bg-surface-100 transition-transform duration-300 ease-in-out md:relative md:translate-x-0',
+          isSidebarOpen ? 'translate-x-0 shadow-overlay' : '-translate-x-full'
+        )}
+      >
+        <div className="flex items-center justify-center border-b border-divider p-6">
+          <Link
+            to="/"
+            onClick={handleNavigation}
+            className="block rounded-sm"
+            aria-label="Go to homepage"
+          >
+            <BrandLogo className="h-24" />
+          </Link>
+        </div>
+        <nav className="flex-1 space-y-1 overflow-y-auto p-4">
+          {navItems.map(({ to, label, Icon }) => (
+            <NavLink
+              key={to}
+              to={to}
+              label={label}
+              icon={<Icon />}
+              onClick={handleNavigation}
+            />
+          ))}
+        </nav>
+        <div className="border-t border-divider p-4">
+          <Button
+            variant="secondary"
+            fullWidth
+            onClick={() => setIsDarkMode(!isDarkMode)}
+          >
+            {isDarkMode ? (
+              <SunIcon className="h-5 w-5" />
+            ) : (
+              <MoonIcon className="h-5 w-5" />
+            )}
+            {isDarkMode ? 'Light mode' : 'Dark mode'}
+          </Button>
+        </div>
+      </aside>
+    </>
+  );
 };
 
 export default Sidebar;

@@ -1,22 +1,20 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { buttonClasses } from '../components/ui';
 
 const NotFoundPage: React.FC = () => {
-    return (
-        <div className="flex flex-col items-center justify-center h-full text-center p-8">
-            <h1 className="text-8xl font-bold text-primary-600">404</h1>
-            <h2 className="text-3xl font-semibold mt-6 mb-4 text-slate-800 dark:text-slate-100">Page Not Found</h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300 mb-8 max-w-md">
-                Oops! It seems like the page you were trying to reach doesn't exist or has been moved.
-            </p>
-            <Link
-                to="/"
-                className="px-6 py-3 bg-primary-600 text-white font-semibold rounded-lg shadow-md hover:bg-primary-700 transition-colors duration-200"
-            >
-                Go Back to Homepage
-            </Link>
-        </div>
-    );
+  return (
+    <div className="flex h-full flex-col items-center justify-center p-8 text-center animate-fade-in">
+      <p className="text-label uppercase text-brand-mid">Error 404</p>
+      <h1 className="mt-2 text-display text-brand-navy">Page not found</h1>
+      <p className="mt-4 mb-8 max-w-md text-body text-ink-muted">
+        The page you were looking for doesn&apos;t exist or has been moved.
+      </p>
+      <Link to="/" className={buttonClasses('primary')}>
+        Back to the homepage
+      </Link>
+    </div>
+  );
 };
 
 export default NotFoundPage;
