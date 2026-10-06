@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import App from '../../App';
 import { vi } from 'vitest';
 import MatchMediaMock from 'vitest-matchmedia-mock';
@@ -17,7 +18,11 @@ describe('App', () => {
 
   it('renders in dark mode when prefers-color-scheme is dark', () => {
     matchMedia.useMediaQuery('(prefers-color-scheme: dark)');
-    render(<App />);
+    render(
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    );
 
     // Check that the dark class is applied to the root element
     expect(document.documentElement).toHaveClass('dark');

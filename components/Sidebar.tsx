@@ -1,5 +1,5 @@
 import React from 'react';
-import { Page } from '../types';
+import { NavLink as RouterNavLink, Link } from 'react-router-dom';
 import {
   HomeIcon,
   LightBulbIcon,
@@ -17,73 +17,58 @@ import BrandLogo from './BrandLogo';
 import { Button, cx } from './ui';
 
 interface SidebarProps {
-  currentPage: Page;
-  setCurrentPage: (page: Page) => void;
   isSidebarOpen: boolean;
   setIsSidebarOpen: (isOpen: boolean) => void;
   isDarkMode: boolean;
   setIsDarkMode: (isDark: boolean) => void;
 }
 
-const navItems: { page: Page; label: string; Icon: typeof HomeIcon }[] = [
-  { page: 'home', label: 'Home', Icon: HomeIcon },
-  { page: 'agent', label: 'User story agent', Icon: LightBulbIcon },
-  { page: 'meeting', label: 'Meeting assistant', Icon: ClipboardListIcon },
-  { page: 'news', label: 'Latest news', Icon: NewspaperIcon },
-  { page: 'assessment', label: 'Assessment', Icon: ChartBarIcon },
-  { page: 'quiz', label: 'Knowledge quiz', Icon: QuestionMarkCircleIcon },
-  { page: 'competencies', label: 'Core competencies', Icon: DocumentTextIcon },
-  { page: 'templates', label: 'Templates', Icon: TemplateIcon },
-  { page: 'recommendations', label: 'Recommendations', Icon: SparklesIcon },
+const navItems: { to: string; label: string; Icon: typeof HomeIcon }[] = [
+  { to: '/', label: 'Home', Icon: HomeIcon },
+  { to: '/agent', label: 'User story agent', Icon: LightBulbIcon },
+  { to: '/meeting', label: 'Meeting assistant', Icon: ClipboardListIcon },
+  { to: '/news', label: 'Latest news', Icon: NewspaperIcon },
+  { to: '/assessment', label: 'Assessment', Icon: ChartBarIcon },
+  { to: '/quiz', label: 'Knowledge quiz', Icon: QuestionMarkCircleIcon },
+  { to: '/competencies', label: 'Core competencies', Icon: DocumentTextIcon },
+  { to: '/templates', label: 'Templates', Icon: TemplateIcon },
+  { to: '/recommendations', label: 'Recommendations', Icon: SparklesIcon },
 ];
 
 const NavLink: React.FC<{
-  page: Page;
+  to: string;
   label: string;
   icon: React.ReactNode;
-  currentPage: Page;
-  onClick: (page: Page) => void;
-}> = ({ page, label, icon, currentPage, onClick }) => {
-  const isActive = currentPage === page;
-  return (
-    <a
-      href="#"
-      aria-current={isActive ? 'page' : undefined}
-      onClick={(e) => {
-        e.preventDefault();
-        onClick(page);
-      }}
-      className={cx(
-        'flex items-center gap-4 rounded-md px-4 py-2 text-body transition-colors',
+  onClick: () => void;
+}> = ({ to, label, icon, onClick }) => (
+  <RouterNavLink
+    to={to}
+    end={to === '/'}
+    onClick={onClick}
+    className={({ isActive }) =>
+      cx(
+        'group flex items-center gap-4 rounded-md px-4 py-2 text-body transition-colors',
         isActive
-          ? 'bg-surface-200 font-semibold text-brand-mid'
+          ? 'active bg-surface-200 font-semibold text-brand-mid'
           : 'text-ink hover:bg-surface-200'
-      )}
-    >
-      <span className={isActive ? 'text-brand-mid' : 'text-brand-teal'}>
-        {icon}
-      </span>
-      <span>{label}</span>
-    </a>
-  );
-};
+      )
+    }
+  >
+    <span className="text-brand-teal group-[.active]:text-brand-mid">
+      {icon}
+    </span>
+    <span>{label}</span>
+  </RouterNavLink>
+);
 
 const Sidebar: React.FC<SidebarProps> = ({
-  currentPage,
-  setCurrentPage,
   isSidebarOpen,
   setIsSidebarOpen,
   isDarkMode,
   setIsDarkMode,
 }) => {
-  const handleNavigation = (page: Page) => {
-    setCurrentPage(page);
+  const handleNavigation = () => {
     setIsSidebarOpen(false); // Close sidebar on mobile after navigation
-  };
-
-  const handleLogoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    handleNavigation('home');
   };
 
   return (
@@ -102,23 +87,22 @@ const Sidebar: React.FC<SidebarProps> = ({
         )}
       >
         <div className="flex items-center justify-center border-b border-divider p-6">
-          <a
-            href="#"
-            onClick={handleLogoClick}
+          <Link
+            to="/"
+            onClick={handleNavigation}
             className="block rounded-sm"
             aria-label="Go to homepage"
           >
             <BrandLogo className="h-24" />
-          </a>
+          </Link>
         </div>
         <nav className="flex-1 space-y-1 overflow-y-auto p-4">
-          {navItems.map(({ page, label, Icon }) => (
+          {navItems.map(({ to, label, Icon }) => (
             <NavLink
-              key={page}
-              page={page}
+              key={to}
+              to={to}
               label={label}
               icon={<Icon />}
-              currentPage={currentPage}
               onClick={handleNavigation}
             />
           ))}
