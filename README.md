@@ -37,7 +37,6 @@ npm (comes with Node.js)
 Installation & Setup
 **Clone the repository:**bash git clone https://github.com/your-username/ba-studio.git cd ba-studio
 
-
 Install dependencies:
 
 Bash
@@ -91,19 +90,19 @@ Trigger a deploy. Netlify will build the project and deploy the site and serverl
 📂 Project Structure
 /
 ├── netlify/
-│   └── functions/
-│       └── gemini.ts       # Serverless function to handle Gemini API calls
-├── public/                 # Static assets
+│ └── functions/
+│ └── gemini.ts # Serverless function to handle Gemini API calls
+├── public/ # Static assets
 ├── src/
-│   ├── components/         # Reusable React components (Sidebar, Footer, etc.)
-│   ├── pages/              # Page components for each feature
-│   ├── test/               # Test files
-│   ├── App.tsx             # Main application component and routing logic
-│   ├── main.tsx            # Application entry point
-│   └── index.css           # Main CSS file with Tailwind directives
-├──.env.example            # Example environment file
-├──.gitignore              # Files to be ignored by Git
-├── index.html              # Main HTML entry file
-├── netlify.toml            # Netlify deployment configuration
-├── package.json            # Project dependencies and scripts
-└── vite.config.ts          # Vite configuration
+│ ├── components/ # Reusable React components (Sidebar, Footer, etc.)
+│ ├── pages/ # Page components for each feature
+│ ├── test/ # Test files
+│ ├── App.tsx # Main application component and routing logic
+│ ├── main.tsx # Application entry point
+│ └── index.css # Main CSS file with Tailwind directives
+├──.env.example # Example environment file
+├──.gitignore # Files to be ignored by Git
+├── index.html # Main HTML entry file
+├── netlify.toml # Netlify deployment configuration
+├── package.json # Project dependencies and scripts
+└── vite.config.ts # Vite configuration

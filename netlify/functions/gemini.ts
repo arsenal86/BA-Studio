@@ -1,8 +1,8 @@
-
 import { Handler } from '@netlify/functions';
 import { GoogleGenAI } from '@google/genai';
 
-const getAgentPrompt = () => `You are an expert Agile Business Analyst and User Story Coach. Your primary function is to act as a "definition of ready" gatekeeper. You will analyze user stories to ensure they are clear, valuable, and well-formed before they are presented to a development team.
+const getAgentPrompt =
+  () => `You are an expert Agile Business Analyst and User Story Coach. Your primary function is to act as a "definition of ready" gatekeeper. You will analyze user stories to ensure they are clear, valuable, and well-formed before they are presented to a development team.
 Your goal is to provide constructive, actionable feedback that helps refine the story to meet the highest standards of quality. You must be collaborative in your tone, aiming to coach and assist, not just to criticize.
 
 ANALYSIS FRAMEWORK:
@@ -49,7 +49,8 @@ Rate each criterion out of 10 points:
 Please analyze the following user story and provide your response in the exact format specified above.
 `;
 
-const getDevelopmentPlanPrompt = () => `You are an expert career coach and mentor for Business Analysts. Your task is to create a personalized development plan based on a user's self-assessment of their core competencies.
+const getDevelopmentPlanPrompt =
+  () => `You are an expert career coach and mentor for Business Analysts. Your task is to create a personalized development plan based on a user's self-assessment of their core competencies.
 
 The user will provide their ratings on a scale of 1 (Beginner) to 5 (Expert) for several key BA skills.
 
@@ -87,8 +88,13 @@ Please generate a development plan based on the following self-assessment rating
 `;
 
 const getWeeklyBriefingPrompt = () => {
-    const today = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    return `You are an expert AI assistant and content creator for Business Analysts. Your task is to generate a clean, modern, and highly scannable weekly intelligence briefing. The tone should be professional yet engaging.
+  const today = new Date().toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  return `You are an expert AI assistant and content creator for Business Analysts. Your task is to generate a clean, modern, and highly scannable weekly intelligence briefing. The tone should be professional yet engaging.
 
 The briefing should be relevant for the current week. Today's date is ${today}.
 
@@ -138,7 +144,8 @@ OUTPUT STRUCTURE (Required Format):
 `;
 };
 
-const getMeetingAgendaPrompt = () => `You are an expert meeting facilitator and Business Analyst assistant. Your task is to generate a professional, structured, and effective meeting agenda based on the provided details.
+const getMeetingAgendaPrompt =
+  () => `You are an expert meeting facilitator and Business Analyst assistant. Your task is to generate a professional, structured, and effective meeting agenda based on the provided details.
 
 The agenda should promote a productive discussion and clear outcomes. Use Markdown for formatting.
 
@@ -177,7 +184,8 @@ OUTPUT STRUCTURE (Required Format):
 Please generate a meeting agenda based on the following details:
 `;
 
-const getMeetingSummaryPrompt = () => `You are an expert Business Analyst assistant specializing in documentation and communication. Your task is to analyze a set of raw, unstructured meeting notes and produce a clean, concise, and professional summary.
+const getMeetingSummaryPrompt =
+  () => `You are an expert Business Analyst assistant specializing in documentation and communication. Your task is to analyze a set of raw, unstructured meeting notes and produce a clean, concise, and professional summary.
 
 Your output must clearly distinguish between the overall summary, key decisions made, and actionable next steps. Use Markdown for formatting.
 
@@ -212,161 +220,214 @@ OUTPUT STRUCTURE (Required Format):
 Please analyze the following raw meeting notes and generate the summary in the format specified above.
 `;
 
-
 // Retrieve API key from environment. Prefer GEMINI_API_KEY (used in Netlify env),
 // but fall back to API_KEY for compatibility with other deploy setups.
 const getApiKey = (): string => {
-    const apiKey = process.env.GEMINI_API_KEY ?? process.env.API_KEY;
-    if (!apiKey) {
-        console.error("Missing API key environment variable. Expected GEMINI_API_KEY or API_KEY.");
-        throw new Error("API key is missing. Set the GEMINI_API_KEY (preferred) or API_KEY environment variable in your deployment.");
-    }
-    // Do not log the key value to avoid leaking secrets in logs.
-    return apiKey;
-}
-
-const analyzeUserStory = async (userStory: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
-
-    const contents = [
-        { role: "user", parts: [{ text: getAgentPrompt() }] },
-        { role: "model", parts: [{ text: "Understood. I am an expert Agile Business Analyst and User Story Coach, acting as a 'definition of ready' gatekeeper. I will analyze user stories based on your framework and provide a detailed report. I am ready to receive the user story." }] },
-        { role: "user", parts: [{ text: `Please analyze this user story: ${userStory}` }] }
-    ];
-
-    const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: { maxOutputTokens: 2048, temperature: 0.3 }
-    });
-
-    return response.text;
+  const apiKey = process.env.GEMINI_API_KEY ?? process.env.API_KEY;
+  if (!apiKey) {
+    console.error(
+      'Missing API key environment variable. Expected GEMINI_API_KEY or API_KEY.'
+    );
+    throw new Error(
+      'API key is missing. Set the GEMINI_API_KEY (preferred) or API_KEY environment variable in your deployment.'
+    );
+  }
+  // Do not log the key value to avoid leaking secrets in logs.
+  return apiKey;
 };
 
-const generateDevelopmentPlan = async (ratings: { [key: string]: number }): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+const analyzeUserStory = async (userStory: string): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  const modelName = 'gemini-2.5-flash';
 
-    const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
+  const contents = [
+    { role: 'user', parts: [{ text: getAgentPrompt() }] },
+    {
+      role: 'model',
+      parts: [
+        {
+          text: "Understood. I am an expert Agile Business Analyst and User Story Coach, acting as a 'definition of ready' gatekeeper. I will analyze user stories based on your framework and provide a detailed report. I am ready to receive the user story.",
+        },
+      ],
+    },
+    {
+      role: 'user',
+      parts: [{ text: `Please analyze this user story: ${userStory}` }],
+    },
+  ];
 
-    const contents = [
-        { role: "user", parts: [{ text: getDevelopmentPlanPrompt() }] },
-        { role: "model", parts: [{ text: "Understood. I am an expert BA career coach. I will analyze the user's self-assessment ratings and provide a personalized, actionable development plan in the specified format. I am ready to receive the ratings." }] },
-        { role: "user", parts: [{ text: userRatingsText }] }
-    ];
-    
-    const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: { maxOutputTokens: 4096, temperature: 0.4 }
-    });
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: contents,
+    config: { maxOutputTokens: 2048, temperature: 0.3 },
+  });
 
-    return response.text;
+  return response.text;
+};
+
+const generateDevelopmentPlan = async (ratings: {
+  [key: string]: number;
+}): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  const modelName = 'gemini-2.5-flash';
+
+  const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
+
+  const contents = [
+    { role: 'user', parts: [{ text: getDevelopmentPlanPrompt() }] },
+    {
+      role: 'model',
+      parts: [
+        {
+          text: "Understood. I am an expert BA career coach. I will analyze the user's self-assessment ratings and provide a personalized, actionable development plan in the specified format. I am ready to receive the ratings.",
+        },
+      ],
+    },
+    { role: 'user', parts: [{ text: userRatingsText }] },
+  ];
+
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: contents,
+    config: { maxOutputTokens: 4096, temperature: 0.4 },
+  });
+
+  return response.text;
 };
 
 const generateWeeklyBriefing = async (): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  const modelName = 'gemini-2.5-flash';
 
-    const contents = [
-        { role: "user", parts: [{ text: getWeeklyBriefingPrompt() }] },
-        { role: "model", parts: [{ text: "Understood. I will generate a concise weekly intelligence briefing for Business Analysts in the specified Markdown format, including UK-specific community news, relevant for the current week." }] }
-    ];
+  const contents = [
+    { role: 'user', parts: [{ text: getWeeklyBriefingPrompt() }] },
+    {
+      role: 'model',
+      parts: [
+        {
+          text: 'Understood. I will generate a concise weekly intelligence briefing for Business Analysts in the specified Markdown format, including UK-specific community news, relevant for the current week.',
+        },
+      ],
+    },
+  ];
 
-    const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: { maxOutputTokens: 4096, temperature: 0.5 }
-    });
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: contents,
+    config: { maxOutputTokens: 4096, temperature: 0.5 },
+  });
 
-    return response.text;
+  return response.text;
 };
 
-const generateMeetingAgenda = async (topic: string, objectives: string, attendees: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+const generateMeetingAgenda = async (
+  topic: string,
+  objectives: string,
+  attendees: string
+): Promise<string> => {
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  const modelName = 'gemini-2.5-flash';
 
-    const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
+  const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
 
-    const contents = [
-        { role: "user", parts: [{ text: getMeetingAgendaPrompt() }] },
-        { role: "model", parts: [{ text: "Understood. I will act as a meeting facilitator and generate a professional agenda in the specified Markdown format based on the provided topic, objectives, and attendees." }] },
-        { role: "user", parts: [{ text: promptText }] }
-    ];
+  const contents = [
+    { role: 'user', parts: [{ text: getMeetingAgendaPrompt() }] },
+    {
+      role: 'model',
+      parts: [
+        {
+          text: 'Understood. I will act as a meeting facilitator and generate a professional agenda in the specified Markdown format based on the provided topic, objectives, and attendees.',
+        },
+      ],
+    },
+    { role: 'user', parts: [{ text: promptText }] },
+  ];
 
-    const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: { maxOutputTokens: 2048, temperature: 0.4 }
-    });
-    
-    return response.text;
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: contents,
+    config: { maxOutputTokens: 2048, temperature: 0.4 },
+  });
+
+  return response.text;
 };
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
-    const ai = new GoogleGenAI({ apiKey: getApiKey() });
-    const modelName = 'gemini-2.5-flash';
+  const ai = new GoogleGenAI({ apiKey: getApiKey() });
+  const modelName = 'gemini-2.5-flash';
 
-    const contents = [
-        { role: "user", parts: [{ text: getMeetingSummaryPrompt() }] },
-        { role: "model", parts: [{ text: "Understood. I will analyze the provided raw meeting notes and generate a clean, professional summary that extracts key discussion points, decisions, and action items into the specified Markdown format." }] },
-        { role: "user", parts: [{ text: `Here are the notes:\n\n${notes}` }] }
-    ];
-    
-    const response = await ai.models.generateContent({
-        model: modelName,
-        contents: contents,
-        config: { maxOutputTokens: 2048, temperature: 0.3 }
-    });
+  const contents = [
+    { role: 'user', parts: [{ text: getMeetingSummaryPrompt() }] },
+    {
+      role: 'model',
+      parts: [
+        {
+          text: 'Understood. I will analyze the provided raw meeting notes and generate a clean, professional summary that extracts key discussion points, decisions, and action items into the specified Markdown format.',
+        },
+      ],
+    },
+    { role: 'user', parts: [{ text: `Here are the notes:\n\n${notes}` }] },
+  ];
 
-    return response.text;
+  const response = await ai.models.generateContent({
+    model: modelName,
+    contents: contents,
+    config: { maxOutputTokens: 2048, temperature: 0.3 },
+  });
+
+  return response.text;
 };
 
 export const handler: Handler = async (event) => {
-    if (!event.body) {
+  if (!event.body) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({ error: 'Missing request body' }),
+    };
+  }
+
+  try {
+    const { mode, ...params } = JSON.parse(event.body);
+    let result;
+
+    switch (mode) {
+      case 'analyzeUserStory':
+        result = await analyzeUserStory(params.userStory);
+        break;
+      case 'generateDevelopmentPlan':
+        result = await generateDevelopmentPlan(params.ratings);
+        break;
+      case 'generateWeeklyBriefing':
+        result = await generateWeeklyBriefing();
+        break;
+      case 'generateMeetingAgenda':
+        result = await generateMeetingAgenda(
+          params.topic,
+          params.objectives,
+          params.attendees
+        );
+        break;
+      case 'summarizeMeetingNotes':
+        result = await summarizeMeetingNotes(params.notes);
+        break;
+      default:
         return {
-            statusCode: 400,
-            body: JSON.stringify({ error: 'Missing request body' }),
+          statusCode: 400,
+          body: JSON.stringify({ error: 'Invalid mode' }),
         };
     }
 
-    try {
-        const { mode, ...params } = JSON.parse(event.body);
-        let result;
-
-        switch (mode) {
-            case 'analyzeUserStory':
-                result = await analyzeUserStory(params.userStory);
-                break;
-            case 'generateDevelopmentPlan':
-                result = await generateDevelopmentPlan(params.ratings);
-                break;
-            case 'generateWeeklyBriefing':
-                result = await generateWeeklyBriefing();
-                break;
-            case 'generateMeetingAgenda':
-                result = await generateMeetingAgenda(params.topic, params.objectives, params.attendees);
-                break;
-            case 'summarizeMeetingNotes':
-                result = await summarizeMeetingNotes(params.notes);
-                break;
-            default:
-                return {
-                    statusCode: 400,
-                    body: JSON.stringify({ error: 'Invalid mode' }),
-                };
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ result }),
-        };
-    } catch (error: any) {
-        console.error("Function handler error:", error);
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ error: `An internal server error occurred: ${error.message}` }),
-        };
-    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ result }),
+    };
+  } catch (error: any) {
+    console.error('Function handler error:', error);
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        error: `An internal server error occurred: ${error.message}`,
+      }),
+    };
+  }
 };

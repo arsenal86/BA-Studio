@@ -16,7 +16,11 @@
 
 @layer utilities {
   .text-gradient-themed {
-    background-image: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    background-image: linear-gradient(
+      to right,
+      var(--gradient-start),
+      var(--gradient-end)
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
