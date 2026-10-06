@@ -25,8 +25,9 @@
   --success: #1b7a4b;
   --success-surface: #e6f4ec;
 
-  /* App-local elevation, for modal and mobile drawer only */
+  /* App-local elevation and scrim, for modal and mobile drawer only */
   --shadow-overlay: 0 16px 48px rgb(13 27 38 / 0.24);
+  --overlay: rgb(13 27 38 / 0.5);
 
   color-scheme: light;
 }
@@ -49,6 +50,7 @@
   --success-surface: #12352a;
 
   --shadow-overlay: 0 16px 48px rgb(0 0 0 / 0.5);
+  --overlay: rgb(0 0 0 / 0.6);
 
   color-scheme: dark;
 }

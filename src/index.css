@@ -24,6 +24,7 @@
   --color-danger-surface: var(--danger-surface);
   --color-success: var(--success);
   --color-success-surface: var(--success-surface);
+  --color-overlay: var(--overlay);
   --color-transparent: transparent;
   --color-current: currentColor;
 
