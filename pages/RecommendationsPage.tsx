@@ -1,18 +1,19 @@
 import React from 'react';
+import { PageHeader, cardClasses } from '../components/ui';
 
 // A reusable component for each section
 const ResourceSection: React.FC<{
   title: string;
   children: React.ReactNode;
 }> = ({ title, children }) => (
-  <div className="mb-10">
-    <h2 className="text-3xl font-bold text-slate-800 dark:text-white mb-6 pb-2 border-b-2 border-primary-500/50">
+  <section className="mb-12">
+    <h2 className="mb-6 border-b border-divider pb-2 text-h2 text-brand-navy">
       {title}
     </h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
       {children}
     </div>
-  </div>
+  </section>
 );
 
 // A reusable card for each resource
@@ -26,17 +27,13 @@ const ResourceCard: React.FC<{
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    className="block bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md hover:shadow-xl hover:-translate-y-1 transform transition-all duration-300 border border-slate-200 dark:border-slate-700 group"
+    className={cardClasses('panel', true, 'group')}
   >
-    <h3 className="text-xl font-bold text-primary-600 dark:text-primary-400 group-hover:underline">
+    <h3 className="text-h3 text-brand-mid underline-offset-4 group-hover:underline">
       {title}
     </h3>
-    {author && (
-      <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
-        {author}
-      </p>
-    )}
-    <p className="text-slate-600 dark:text-slate-300">{description}</p>
+    {author && <p className="mb-2 text-small text-ink-muted">{author}</p>}
+    <p className="mt-1 text-body text-ink">{description}</p>
   </a>
 );
 
@@ -44,20 +41,17 @@ const ResourceCard: React.FC<{
 const RecommendationsPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
-      <h1 className="text-4xl font-bold mb-8 text-slate-900 dark:text-white">
-        Curated BA Resources
-      </h1>
-      <p className="text-lg text-slate-600 dark:text-slate-400 mb-12">
-        A handpicked list of resources to help you grow as a Business Analyst,
-        stay current, and connect with the community.
-      </p>
+      <PageHeader
+        title="Curated BA resources"
+        subtitle="A hand-picked list of resources to help you grow as a business analyst, stay current and connect with the community."
+      />
 
       {/* Essential Reading Section */}
-      <ResourceSection title="Essential Reading">
+      <ResourceSection title="Essential reading">
         <ResourceCard
           title="BABOK Guide v3"
           author="IIBA"
-          description="The globally recognized standard for the practice of business analysis. An essential reference."
+          description="The globally recognised standard for the practice of business analysis. An essential reference."
           href="https://www.iiba.org/career-resources/a-business-analysis-professionals-foundation-for-success/babok/"
         />
         <ResourceCard
@@ -75,7 +69,7 @@ const RecommendationsPage: React.FC = () => {
       </ResourceSection>
 
       {/* Websites & Blogs Section */}
-      <ResourceSection title="Websites & Blogs">
+      <ResourceSection title="Websites and blogs">
         <ResourceCard
           title="BA Times"
           description="Provides articles, webinars, and templates covering all aspects of business analysis."
@@ -99,7 +93,7 @@ const RecommendationsPage: React.FC = () => {
       </ResourceSection>
 
       {/* Industry Voices (LinkedIn) */}
-      <ResourceSection title="Industry Voices to Follow">
+      <ResourceSection title="Industry voices to follow">
         <ResourceCard
           title="Adriana Girdler"
           description="Productivity and project management expert with a focus on practical BA skills. (LinkedIn)"
@@ -118,7 +112,7 @@ const RecommendationsPage: React.FC = () => {
       </ResourceSection>
 
       {/* Communities & Forums Section */}
-      <ResourceSection title="Communities & Forums">
+      <ResourceSection title="Communities and forums">
         <ResourceCard
           title="IIBA Community"
           description="Official forums from the IIBA, allowing members to discuss trends, ask questions, and network."
@@ -161,7 +155,7 @@ const RecommendationsPage: React.FC = () => {
       </ResourceSection>
 
       {/* Events & Webinars */}
-      <ResourceSection title="Events & Webinars">
+      <ResourceSection title="Events and webinars">
         <ResourceCard
           title="BA World Events"
           description="A series of global conferences for Business Analysts, often with virtual attendance options."

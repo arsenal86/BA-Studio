@@ -1,15 +1,21 @@
-import { marked } from 'marked';
-import React, { useState, useEffect, useRef } from 'react';
-import DOMPurify from 'dompurify';
+import React, { useState } from 'react';
 import GuidanceModal from '../components/GuidanceModal';
 import { InformationCircleIcon } from '../components/icons';
+import {
+  Alert,
+  Button,
+  Card,
+  MarkdownOutput,
+  PageHeader,
+  Spinner,
+} from '../components/ui';
 
 const competencies = [
-  'Requirements Elicitation',
-  'Stakeholder Management',
-  'Business Process Modeling',
-  'Solution Design & Validation',
-  'Agile Methodologies',
+  'Requirements elicitation',
+  'Stakeholder management',
+  'Business process modelling',
+  'Solution design and validation',
+  'Agile methodologies',
 ];
 
 const ratingLabels: { [key: number]: string } = {
@@ -26,29 +32,26 @@ const CompetencySlider: React.FC<{
   onChange: (name: string, value: number) => void;
 }> = ({ name, value, onChange }) => {
   return (
-    <div className="bg-white dark:bg-slate-800 p-4 rounded-lg shadow-md border border-slate-200 dark:border-slate-700">
-      <label
-        htmlFor={name}
-        className="block text-lg font-semibold text-slate-800 dark:text-slate-200"
-      >
+    <Card padding="md">
+      <label htmlFor={name} className="block text-h3 text-brand-navy">
         {name}
       </label>
-      <div className="flex items-center mt-3">
+      <div className="mt-2 flex items-center gap-4">
         <input
           id={name}
           type="range"
           min="1"
           max="5"
           value={value}
+          aria-valuetext={ratingLabels[value]}
           onChange={(e) => onChange(name, parseInt(e.target.value))}
-          className="w-full h-2 bg-slate-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer"
-          style={{ accentColor: 'var(--color-primary-500)' }}
+          className="w-full cursor-pointer"
         />
-        <span className="ml-4 w-28 text-center text-primary-600 dark:text-primary-400 font-semibold">
+        <span className="w-28 shrink-0 text-center font-semibold text-brand-mid">
           {ratingLabels[value]}
         </span>
       </div>
-    </div>
+    </Card>
   );
 };
 
@@ -60,7 +63,6 @@ const CompetencyAssessmentPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const outputRef = useRef<HTMLDivElement>(null);
 
   const handleRatingChange = (name: string, value: number) => {
     setRatings((prev) => ({ ...prev, [name]: value }));
@@ -96,36 +98,26 @@ const CompetencyAssessmentPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (developmentPlan && outputRef.current) {
-      const sanitizedHtml = DOMPurify.sanitize(marked.parse(developmentPlan));
-      outputRef.current.innerHTML = sanitizedHtml;
-    }
-  }, [developmentPlan]);
-
   const allRated = Object.keys(ratings).length === competencies.length;
 
   return (
-    <div className="flex flex-col h-full animate-fade-in">
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-          Competency Self-Assessment
-        </h1>
-        <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
-          Rate your proficiency in each area to receive a personalized
-          development plan from our AI coach.
-        </p>
-        <button
+    <div className="flex h-full flex-col animate-fade-in">
+      <PageHeader
+        title="Competency self-assessment"
+        subtitle="Rate your proficiency in each area to get a personalised development plan from our AI coach."
+      >
+        <Button
+          variant="link"
+          className="mt-4"
           onClick={() => setIsModalOpen(true)}
-          className="mt-4 inline-flex items-center text-primary-600 dark:text-primary-400 hover:underline"
         >
-          <InformationCircleIcon />
-          <span className="ml-2 font-semibold">How should I rate myself?</span>
-        </button>
-      </div>
+          <InformationCircleIcon className="h-5 w-5" />
+          How should I rate myself?
+        </Button>
+      </PageHeader>
 
-      <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Panel */}
+      <div className="grid flex-grow grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Input panel */}
         <div className="flex flex-col">
           <div className="space-y-4">
             {competencies.map((name) => (
@@ -137,91 +129,48 @@ const CompetencyAssessmentPage: React.FC = () => {
               />
             ))}
           </div>
-          <button
+          <Button
+            className="mt-6"
+            fullWidth
             onClick={handleGeneratePlan}
-            disabled={isLoading || !allRated}
-            className="mt-6 w-full bg-primary-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center"
+            disabled={!allRated}
+            loading={isLoading}
+            loadingText="Generating your plan…"
           >
-            {isLoading ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Generating Your Plan...
-              </>
-            ) : (
-              'Generate My Development Plan'
-            )}
-          </button>
+            Generate my development plan
+          </Button>
         </div>
 
-        {/* Output Panel */}
-        <div className="flex flex-col bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold mb-4">Your Personalized Plan</h2>
+        {/* Output panel */}
+        <Card className="flex flex-col">
+          <h2 className="mb-4 text-h3 text-brand-navy">
+            Your personalised plan
+          </h2>
           {error && (
-            <div
-              className="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded-md"
-              role="alert"
-            >
-              <p className="font-bold">Error</p>
-              <p>{error}</p>
-            </div>
+            <Alert variant="error" title="Error" className="mb-4">
+              {error}
+            </Alert>
           )}
-          <div className="flex-grow overflow-y-auto prose dark:prose-invert max-w-none prose-headings:text-primary-600 dark:prose-headings:text-primary-400 prose-strong:text-slate-800 dark:prose-strong:text-slate-100 prose-li:marker:text-primary-500">
+          <div className="flex-grow overflow-y-auto">
             {isLoading && !developmentPlan && (
-              <div className="flex flex-col items-center justify-center h-full text-center text-slate-500">
-                <svg
-                  className="animate-spin h-8 w-8 text-primary-500 mb-4"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+              <div className="flex h-full flex-col items-center justify-center gap-4 text-center text-ink-muted">
+                <Spinner size="lg" className="text-brand-mid" />
                 <p>
-                  Our AI coach is analyzing your assessment and crafting your
-                  personalized plan...
+                  Our AI coach is reviewing your assessment and putting together
+                  your plan…
                 </p>
               </div>
             )}
             {!isLoading && !developmentPlan && !error && (
-              <div className="flex items-center justify-center h-full text-center text-slate-500">
+              <div className="flex h-full items-center justify-center text-center text-ink-muted">
                 <p>Your development plan will appear here once generated.</p>
               </div>
             )}
-            <div ref={outputRef}></div>
+            {developmentPlan && <MarkdownOutput markdown={developmentPlan} />}
           </div>
-        </div>
+        </Card>
       </div>
+
       <GuidanceModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

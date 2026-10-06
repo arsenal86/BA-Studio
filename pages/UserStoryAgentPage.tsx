@@ -1,14 +1,22 @@
-import { marked } from 'marked';
-import React, { useState, useEffect, useRef } from 'react';
-import DOMPurify from 'dompurify';
+import React, { useState, useRef } from 'react';
+import {
+  Alert,
+  Button,
+  Card,
+  FieldLabel,
+  MarkdownOutput,
+  PageHeader,
+  Textarea,
+} from '../components/ui';
 
 const ExampleStory: React.FC<{
   text: string;
   onClick: (text: string) => void;
 }> = ({ text, onClick }) => (
   <button
+    type="button"
     onClick={() => onClick(text)}
-    className="w-full text-left p-3 bg-slate-200 dark:bg-slate-700 rounded-md hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-sm text-slate-700 dark:text-slate-300"
+    className="w-full rounded-sm border border-divider bg-surface-100 p-2 text-left text-small text-ink transition-colors hover:border-brand-mid"
   >
     {text}
   </button>
@@ -19,16 +27,17 @@ const UserStoryAgentPage: React.FC = () => {
   const [analysisResult, setAnalysisResult] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const outputRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleAnalyze = async () => {
     if (!userStory.trim()) {
-      setError('Please enter a user story to analyze.');
+      setError('Please enter a user story to analyse.');
       return;
     }
     if (userStory.length > 5000) {
-      setError('User story is too long. Please keep it under 5000 characters.');
+      setError(
+        'User story is too long. Please keep it under 5,000 characters.'
+      );
       return;
     }
 
@@ -61,13 +70,6 @@ const UserStoryAgentPage: React.FC = () => {
     }
   };
 
-  useEffect(() => {
-    if (analysisResult && outputRef.current) {
-      const sanitizedHtml = DOMPurify.sanitize(marked.parse(analysisResult));
-      outputRef.current.innerHTML = sanitizedHtml;
-    }
-  }, [analysisResult]);
-
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
       e.preventDefault();
@@ -82,109 +84,83 @@ const UserStoryAgentPage: React.FC = () => {
 
   const exampleStories = [
     'As a customer, I want to view my order history, so that I can track my past purchases.',
-    'As a shopper, I want to filter products by color.',
+    'As a shopper, I want to filter products by colour.',
     'The system should let users upload a profile picture.',
   ];
 
   return (
-    <div className="flex flex-col h-full animate-fade-in">
-      <div className="mb-6">
-        <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-          User Story Agent
-        </h1>
-        <p className="mt-2 text-lg text-slate-600 dark:text-slate-400">
-          Enter a user story below and our AI agent will provide a detailed
-          quality analysis.
-        </p>
-      </div>
+    <div className="flex h-full flex-col animate-fade-in">
+      <PageHeader
+        title="User story agent"
+        subtitle="Enter a user story and our AI agent will give you a detailed quality analysis."
+      />
 
-      <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Input Panel */}
-        <div className="flex flex-col bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold mb-4">Your User Story</h2>
-          <div className="flex-grow flex flex-col">
-            <textarea
+      <div className="grid flex-grow grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Input panel */}
+        <Card className="flex flex-col">
+          <h2 className="mb-4 text-h3 text-brand-navy">Your user story</h2>
+          <div className="flex flex-grow flex-col">
+            <FieldLabel htmlFor="user-story" className="sr-only">
+              User story
+            </FieldLabel>
+            <Textarea
+              id="user-story"
               ref={textareaRef}
               value={userStory}
               onChange={(e) => setUserStory(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="e.g., As a registered user, I want to reset my password, so that I can regain access to my account if I forget it."
-              className="w-full flex-grow p-4 bg-slate-50 dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg resize-none focus:ring-2 focus:ring-primary-500 focus:outline-none"
+              placeholder="e.g. As a registered user, I want to reset my password, so that I can regain access to my account if I forget it."
+              className="min-h-48 flex-grow resize-none"
               disabled={isLoading}
-            ></textarea>
-            <div className="text-right text-sm text-slate-500 dark:text-slate-400 mt-2">
+            />
+            <div className="mt-2 text-right text-small text-ink-muted">
               {userStory.length} / 5000
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-lg font-semibold mb-2">Or, try an example:</h3>
+            <h3 className="mb-2 text-label uppercase text-ink-muted">
+              Or try an example
+            </h3>
             <div className="space-y-2">
               {exampleStories.map((story, index) => (
                 <ExampleStory key={index} text={story} onClick={loadExample} />
               ))}
             </div>
           </div>
-          <button
+          <Button
+            className="mt-6"
+            fullWidth
             onClick={handleAnalyze}
-            disabled={isLoading || !userStory.trim()}
-            className="mt-6 w-full bg-primary-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-primary-700 disabled:bg-slate-400 disabled:cursor-not-allowed transition-all duration-300 flex items-center justify-center"
+            disabled={!userStory.trim()}
+            loading={isLoading}
+            loadingText="Analysing…"
           >
-            {isLoading ? (
-              <>
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Analyzing...
-              </>
-            ) : (
-              'Analyze Story (Ctrl+Enter)'
-            )}
-          </button>
-        </div>
+            Analyse story (Ctrl+Enter)
+          </Button>
+        </Card>
 
-        {/* Output Panel */}
-        <div className="flex flex-col bg-white dark:bg-slate-800 p-6 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-          <h2 className="text-2xl font-bold mb-4">Analysis Report</h2>
+        {/* Output panel */}
+        <Card className="flex flex-col">
+          <h2 className="mb-4 text-h3 text-brand-navy">Analysis report</h2>
           {error && (
-            <div
-              className="bg-red-100 dark:bg-red-900 border-l-4 border-red-500 text-red-700 dark:text-red-200 p-4 rounded-md"
-              role="alert"
-            >
-              <p className="font-bold">Error</p>
-              <p>{error}</p>
-            </div>
+            <Alert variant="error" title="Error" className="mb-4">
+              {error}
+            </Alert>
           )}
-          <div className="flex-grow overflow-y-auto prose dark:prose-invert max-w-none prose-headings:text-primary-600 dark:prose-headings:text-primary-400 prose-strong:text-slate-800 dark:prose-strong:text-slate-100 prose-li:marker:text-primary-500">
+          <div className="flex-grow overflow-y-auto">
             {isLoading && !analysisResult && (
-              <div className="flex items-center justify-center h-full">
-                <p className="text-slate-500">Generating analysis...</p>
+              <div className="flex h-full items-center justify-center text-ink-muted">
+                <p>Generating analysis…</p>
               </div>
             )}
             {!isLoading && !analysisResult && !error && (
-              <div className="flex items-center justify-center h-full text-center text-slate-500">
+              <div className="flex h-full items-center justify-center text-center text-ink-muted">
                 <p>Your analysis report will appear here.</p>
               </div>
             )}
-            <div ref={outputRef}></div>
+            {analysisResult && <MarkdownOutput markdown={analysisResult} />}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

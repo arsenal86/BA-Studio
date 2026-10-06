@@ -19,62 +19,65 @@ interface HomePageProps {
 const HomePage: React.FC<HomePageProps> = ({ navigate }) => {
   return (
     <div className="animate-fade-in">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 dark:text-white">
-          Welcome to <span className="text-gradient-themed">BA Studio</span>
+      <div className="mb-12 text-center">
+        <p className="mb-4 text-label uppercase text-brand-mid">
+          For UK business analysts
+        </p>
+        <h1 className="text-h1 md:text-display text-ink">
+          Welcome to <span className="text-gradient-brand">BA Studio UK</span>
         </h1>
-        <p className="mt-4 text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-          Your all-in-one platform for Business Analyst essentials, powered by
-          cutting-edge AI.
+        <p className="mx-auto mt-4 max-w-3xl text-body text-ink-muted">
+          Practical AI tools and guidance for everyday business analysis, all in
+          one place.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         <FeatureCard
-          title="User Story Agent"
-          description="Leverage AI to analyze, score, and refine your user stories against industry best practices."
+          title="User story agent"
+          description="Use AI to analyse, score and refine your user stories against industry good practice."
           icon={<LightBulbIcon />}
           onClick={() => navigate('agent')}
         />
         <FeatureCard
-          title="Meeting Assistant"
-          description="Generate structured agendas and summarize your meeting notes to extract key actions."
+          title="Meeting assistant"
+          description="Generate structured agendas and summarise your meeting notes to pull out key actions."
           icon={<ClipboardListIcon />}
           onClick={() => navigate('meeting')}
         />
         <FeatureCard
-          title="Latest News"
-          description="Get your AI-powered weekly intelligence briefing on BA trends, tools, and techniques."
+          title="Latest news"
+          description="Get your AI-powered weekly briefing on BA trends, tools and techniques."
           icon={<NewspaperIcon />}
           onClick={() => navigate('news')}
         />
         <FeatureCard
-          title="Competency Assessment"
-          description="Get a personalized development plan from our AI coach based on your self-assessed skills."
+          title="Competency assessment"
+          description="Get a personalised development plan from our AI coach based on your self-assessed skills."
           icon={<ChartBarIcon />}
           onClick={() => navigate('assessment')}
         />
         <FeatureCard
-          title="Knowledge Quiz"
-          description="Test your understanding of core BA concepts with our interactive, multiple-choice quiz."
+          title="Knowledge quiz"
+          description="Test your understanding of core BA concepts with an interactive multiple-choice quiz."
           icon={<QuestionMarkCircleIcon />}
           onClick={() => navigate('quiz')}
         />
         <FeatureCard
-          title="Core Competencies"
+          title="Core competencies"
           description="Explore fundamental BA skills, from requirements elicitation to stakeholder management."
           icon={<DocumentTextIcon />}
           onClick={() => navigate('competencies')}
         />
         <FeatureCard
-          title="Tools & Templates"
-          description="Access a curated collection of downloadable templates like BRDs and Use Case documents."
+          title="Tools and templates"
+          description="Download a curated set of templates such as BRDs and use case documents."
           icon={<TemplateIcon />}
           onClick={() => navigate('templates')}
         />
         <FeatureCard
-          title="Curated Recommendations"
-          description="Explore essential books, websites, podcasts, and industry leaders to follow."
+          title="Recommendations"
+          description="Explore essential books, websites, podcasts and industry voices to follow."
           icon={<SparklesIcon />}
           onClick={() => navigate('recommendations')}
         />

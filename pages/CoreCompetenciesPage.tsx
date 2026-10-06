@@ -1,4 +1,6 @@
 import React from 'react';
+import { ExternalLinkIcon } from '../components/icons';
+import { Card, PageHeader } from '../components/ui';
 
 interface Link {
   label: string;
@@ -11,18 +13,14 @@ const CompetencyCard: React.FC<{
   children: React.ReactNode;
   links?: Link[];
 }> = ({ title, children, links }) => (
-  <div className="bg-white dark:bg-slate-800 p-6 rounded-lg shadow-md border border-slate-200 dark:border-slate-700">
-    <h3 className="text-2xl font-bold text-primary-600 dark:text-primary-400 mb-3">
-      {title}
-    </h3>
-    <div className="text-slate-600 dark:text-slate-300 space-y-3">
-      {children}
-    </div>
+  <Card>
+    <h2 className="mb-4 text-h2 text-brand-navy">{title}</h2>
+    <div className="space-y-4 text-body text-ink">{children}</div>
     {links && links.length > 0 && (
-      <div className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-        <h4 className="text-lg font-semibold text-slate-700 dark:text-slate-200 mb-2">
-          Related Resources
-        </h4>
+      <div className="mt-6 border-t border-divider pt-4">
+        <h3 className="mb-2 text-label uppercase text-ink-muted">
+          Related resources
+        </h3>
         <ul className="space-y-2">
           {links.map((link, index) => (
             <li key={index}>
@@ -30,41 +28,30 @@ const CompetencyCard: React.FC<{
                 href={link.href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center text-primary-600 dark:text-primary-400 hover:underline"
+                className="inline-flex items-center gap-2 rounded-sm text-brand-mid underline-offset-4 hover:underline"
               >
-                <span className="font-semibold mr-2">{link.type}:</span>
+                <span className="font-semibold">{link.type}:</span>
                 <span>{link.label}</span>
-                <svg
-                  className="w-4 h-4 ml-1.5"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
+                <ExternalLinkIcon className="h-4 w-4" />
               </a>
             </li>
           ))}
         </ul>
       </div>
     )}
-  </div>
+  </Card>
 );
 
 const CoreCompetenciesPage: React.FC = () => {
   return (
     <div className="animate-fade-in">
-      <h1 className="text-4xl font-bold mb-8 text-slate-900 dark:text-white">
-        Core BA Competencies
-      </h1>
+      <PageHeader
+        title="Core BA competencies"
+        subtitle="The fundamental skills every business analyst builds on, with resources to go deeper."
+      />
       <div className="space-y-6">
         <CompetencyCard
-          title="Requirements Elicitation"
+          title="Requirements elicitation"
           links={[
             {
               type: 'Article',
@@ -91,7 +78,7 @@ const CoreCompetenciesPage: React.FC = () => {
           </p>
         </CompetencyCard>
         <CompetencyCard
-          title="Stakeholder Management"
+          title="Stakeholder management"
           links={[
             {
               type: 'Article',
@@ -111,14 +98,14 @@ const CoreCompetenciesPage: React.FC = () => {
           ]}
         >
           <p>
-            Identifying, analyzing, and managing relationships with individuals
+            Identifying, analysing and managing relationships with individuals
             or groups who have an interest in the project. Effective stakeholder
             management is crucial for project success, ensuring alignment and
             managing expectations.
           </p>
         </CompetencyCard>
         <CompetencyCard
-          title="Business Process Modeling"
+          title="Business process modelling"
           links={[
             {
               type: 'Article',
@@ -138,14 +125,14 @@ const CoreCompetenciesPage: React.FC = () => {
           ]}
         >
           <p>
-            Creating graphical representations of an organization's business
+            Creating graphical representations of an organisation's business
             processes. This helps in understanding the "as-is" state and
             designing the "to-be" state, identifying inefficiencies and
             opportunities for improvement.
           </p>
         </CompetencyCard>
         <CompetencyCard
-          title="Solution Design & Validation"
+          title="Solution design and validation"
           links={[
             {
               type: 'Article',
@@ -172,7 +159,7 @@ const CoreCompetenciesPage: React.FC = () => {
           </p>
         </CompetencyCard>
         <CompetencyCard
-          title="Agile Methodologies"
+          title="Agile methodologies"
           links={[
             {
               type: 'Article',
