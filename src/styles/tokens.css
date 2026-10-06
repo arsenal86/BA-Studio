@@ -1,0 +1,54 @@
+/*
+ * BA Studio UK design system tokens.
+ * Source of truth: https://claude.ai/artifact/T8dX7AjnDi1hPjActcJTa7 (project/tokens.json).
+ * Keep values in sync with the design system; add new tokens there first.
+ *
+ * Tokens marked "app-local" are not in the design system yet (status colours,
+ * overlay shadow). They should be proposed back to it.
+ */
+
+:root {
+  /* Colour: light theme */
+  --brand-navy: #104069;
+  --brand-mid: #1d768a;
+  --brand-teal: #20909a;
+  --ink: #3d3a38;
+  --ink-muted: #66615e;
+  --surface-100: #ffffff;
+  --surface-200: #f1f6f7;
+  --divider: #c9d3d8;
+  --on-brand: #ffffff;
+
+  /* App-local status colours (4.5:1+ on surface-100 and their own surface) */
+  --danger: #b42318;
+  --danger-surface: #fdecea;
+  --success: #1b7a4b;
+  --success-surface: #e6f4ec;
+
+  /* App-local elevation, for modal and mobile drawer only */
+  --shadow-overlay: 0 16px 48px rgb(13 27 38 / 0.24);
+
+  color-scheme: light;
+}
+
+.dark {
+  /* Colour: dark theme (derived in the design system) */
+  --brand-navy: #7fa6cc;
+  --brand-mid: #3fb3bc;
+  --brand-teal: #3fb3bc;
+  --ink: #ecf1f3;
+  --ink-muted: #9aa7ae;
+  --surface-100: #0d1b26;
+  --surface-200: #152836;
+  --divider: #2a3f4e;
+  --on-brand: #0d1b26;
+
+  --danger: #f97066;
+  --danger-surface: #3b1c22;
+  --success: #4ade80;
+  --success-surface: #12352a;
+
+  --shadow-overlay: 0 16px 48px rgb(0 0 0 / 0.5);
+
+  color-scheme: dark;
+}
