@@ -244,7 +244,7 @@ const getApiKey = (): string => {
 
 const analyzeUserStory = async (userStory: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getAgentPrompt() }] },
@@ -275,7 +275,7 @@ const generateDevelopmentPlan = async (ratings: {
   [key: string]: number;
 }): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
 
@@ -303,7 +303,7 @@ const generateDevelopmentPlan = async (ratings: {
 
 const generateWeeklyBriefing = async (): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getWeeklyBriefingPrompt() }] },
@@ -314,6 +314,10 @@ const generateWeeklyBriefing = async (): Promise<string> => {
           text: 'Understood. I will generate a concise weekly intelligence briefing for Business Analysts in the specified Markdown format, including UK-specific community news, relevant for the current week.',
         },
       ],
+    },
+    {
+      role: 'user',
+      parts: [{ text: 'Please generate this week’s briefing now.' }],
     },
   ];
 
@@ -332,7 +336,7 @@ const generateMeetingAgenda = async (
   attendees: string
 ): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
 
@@ -360,7 +364,7 @@ const generateMeetingAgenda = async (
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getMeetingSummaryPrompt() }] },
