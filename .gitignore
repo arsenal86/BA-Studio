@@ -23,6 +23,11 @@ dist-ssr
 *.sln
 *.sw?
 
+# Environment variables (API keys)
+.env
+.env.*
+!.env.example
+
 # Local Netlify folder
 .netlify
 
