@@ -238,7 +238,7 @@ const getApiKey = (): string => {
 
 const analyzeUserStory = async (userStory: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getAgentPrompt() }] },
@@ -269,7 +269,7 @@ const generateDevelopmentPlan = async (ratings: {
   [key: string]: number;
 }): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const userRatingsText = `Here are my self-assessment ratings:\n${JSON.stringify(ratings, null, 2)}`;
 
@@ -297,7 +297,7 @@ const generateDevelopmentPlan = async (ratings: {
 
 const generateWeeklyBriefing = async (): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getWeeklyBriefingPrompt() }] },
@@ -326,7 +326,7 @@ const generateMeetingAgenda = async (
   attendees: string
 ): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const promptText = `Meeting Topic: ${topic}\nMeeting Objectives: ${objectives}\nAttendees: ${attendees}`;
 
@@ -354,7 +354,7 @@ const generateMeetingAgenda = async (
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
   const ai = new GoogleGenAI({ apiKey: getApiKey() });
-  const modelName = 'gemini-2.5-flash';
+  const modelName = 'gemini-3.5-flash-lite';
 
   const contents = [
     { role: 'user', parts: [{ text: getMeetingSummaryPrompt() }] },
