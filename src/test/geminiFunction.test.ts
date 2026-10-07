@@ -13,7 +13,7 @@ vi.mock('@google/genai', () => ({
   },
 }));
 
-import { handler } from './gemini';
+import { handler } from '../../netlify/functions/gemini';
 
 const call = async (body?: unknown) => {
   const event = {
