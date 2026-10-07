@@ -222,6 +222,12 @@ Please analyze the following raw meeting notes and generate the summary in the f
 
 // Retrieve API key from environment. Prefer GEMINI_API_KEY (used in Netlify env),
 // but fall back to API_KEY for compatibility with other deploy setups.
+/** The SDK returns undefined text when the model produces no output (e.g. blocked). */
+const requireText = (text: string | undefined): string => {
+  if (!text) throw new Error('Gemini returned an empty response');
+  return text;
+};
+
 const getApiKey = (): string => {
   const apiKey = process.env.GEMINI_API_KEY ?? process.env.API_KEY;
   if (!apiKey) {
@@ -262,7 +268,7 @@ const analyzeUserStory = async (userStory: string): Promise<string> => {
     config: { maxOutputTokens: 2048, temperature: 0.3 },
   });
 
-  return response.text;
+  return requireText(response.text);
 };
 
 const generateDevelopmentPlan = async (ratings: {
@@ -292,7 +298,7 @@ const generateDevelopmentPlan = async (ratings: {
     config: { maxOutputTokens: 4096, temperature: 0.4 },
   });
 
-  return response.text;
+  return requireText(response.text);
 };
 
 const generateWeeklyBriefing = async (): Promise<string> => {
@@ -317,7 +323,7 @@ const generateWeeklyBriefing = async (): Promise<string> => {
     config: { maxOutputTokens: 4096, temperature: 0.5 },
   });
 
-  return response.text;
+  return requireText(response.text);
 };
 
 const generateMeetingAgenda = async (
@@ -349,7 +355,7 @@ const generateMeetingAgenda = async (
     config: { maxOutputTokens: 2048, temperature: 0.4 },
   });
 
-  return response.text;
+  return requireText(response.text);
 };
 
 const summarizeMeetingNotes = async (notes: string): Promise<string> => {
@@ -375,59 +381,122 @@ const summarizeMeetingNotes = async (notes: string): Promise<string> => {
     config: { maxOutputTokens: 2048, temperature: 0.3 },
   });
 
-  return response.text;
+  return requireText(response.text);
 };
+
+// Matches the user story limit in the UI; other free-text fields get a larger
+// cap so a direct caller cannot send arbitrarily large prompts to the model.
+const MAX_USER_STORY_LENGTH = 5000;
+const MAX_TEXT_LENGTH = 20000;
+
+const badRequest = (error: string) => ({
+  statusCode: 400,
+  body: JSON.stringify({ error }),
+});
+
+/** Returns an error message if the value is not a usable string, else null. */
+const checkText = (
+  name: string,
+  value: unknown,
+  { required = true, max = MAX_TEXT_LENGTH } = {}
+): string | null => {
+  if (value === undefined || value === null || value === '') {
+    return required ? `Missing ${name} parameter` : null;
+  }
+  if (typeof value !== 'string') return `Invalid ${name} parameter`;
+  if (required && !value.trim()) return `Missing ${name} parameter`;
+  if (value.length > max) return `${name} must be ${max} characters or fewer`;
+  return null;
+};
+
+const isValidRatings = (value: unknown): value is { [key: string]: number } =>
+  typeof value === 'object' &&
+  value !== null &&
+  !Array.isArray(value) &&
+  Object.keys(value).length > 0 &&
+  Object.keys(value).length <= 20 &&
+  Object.entries(value).every(
+    ([key, rating]) =>
+      key.length <= 100 &&
+      Number.isInteger(rating) &&
+      (rating as number) >= 1 &&
+      (rating as number) <= 5
+  );
 
 export const handler: Handler = async (event) => {
   if (!event.body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ error: 'Missing request body' }),
-    };
+    return badRequest('Missing request body');
   }
 
+  let payload: unknown;
   try {
-    const { mode, ...params } = JSON.parse(event.body);
-    let result;
+    payload = JSON.parse(event.body);
+  } catch {
+    return badRequest('Request body must be valid JSON');
+  }
+  if (typeof payload !== 'object' || payload === null) {
+    return badRequest('Request body must be a JSON object');
+  }
+  const { mode, ...params } = payload as { [key: string]: unknown };
+
+  try {
+    let result: string;
+    let error: string | null;
 
     switch (mode) {
       case 'analyzeUserStory':
-        result = await analyzeUserStory(params.userStory);
+        error = checkText('userStory', params.userStory, {
+          max: MAX_USER_STORY_LENGTH,
+        });
+        if (error) return badRequest(error);
+        result = await analyzeUserStory(params.userStory as string);
         break;
       case 'generateDevelopmentPlan':
+        if (!isValidRatings(params.ratings)) {
+          return badRequest(
+            params.ratings === undefined
+              ? 'Missing ratings parameter'
+              : 'Invalid ratings parameter'
+          );
+        }
         result = await generateDevelopmentPlan(params.ratings);
         break;
       case 'generateWeeklyBriefing':
         result = await generateWeeklyBriefing();
         break;
       case 'generateMeetingAgenda':
+        // Attendees are optional in the UI ("Attendees (optional)").
+        error =
+          checkText('topic', params.topic) ??
+          checkText('objectives', params.objectives) ??
+          checkText('attendees', params.attendees, { required: false });
+        if (error) return badRequest(error);
         result = await generateMeetingAgenda(
-          params.topic,
-          params.objectives,
-          params.attendees
+          params.topic as string,
+          params.objectives as string,
+          (params.attendees as string | undefined) || 'Not specified'
         );
         break;
       case 'summarizeMeetingNotes':
-        result = await summarizeMeetingNotes(params.notes);
+        error = checkText('notes', params.notes);
+        if (error) return badRequest(error);
+        result = await summarizeMeetingNotes(params.notes as string);
         break;
       default:
-        return {
-          statusCode: 400,
-          body: JSON.stringify({ error: 'Invalid mode' }),
-        };
+        return badRequest('Invalid mode');
     }
 
     return {
       statusCode: 200,
       body: JSON.stringify({ result }),
     };
-  } catch (error: any) {
+  } catch (error: unknown) {
+    // Log the details server-side, but never return them: messages from the
+    // SDK or runtime can contain internal paths, request details or keys.
     console.error('Function handler error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({
-        error: `An internal server error occurred: ${error.message}`,
-      }),
+      body: JSON.stringify({ error: 'An internal server error occurred.' }),
     };
   }
 };
