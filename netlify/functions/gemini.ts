@@ -309,6 +309,10 @@ const generateWeeklyBriefing = async (): Promise<string> => {
         },
       ],
     },
+    {
+      role: 'user',
+      parts: [{ text: 'Please generate this week’s briefing now.' }],
+    },
   ];
 
   const response = await ai.models.generateContent({
