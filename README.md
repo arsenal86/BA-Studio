@@ -1,109 +1,144 @@
-<div align="center"> <img src="https://github.com/user-attachments/assets/08d59e7e-d7a9-4951-81ed-d6f8e7fc992c" alt="BA Studio UK Logo" width="200"/> <h1>BA Studio</h1> <p><i>Clarity. Strategy. Solutions.</i></p> <p>An AI-powered toolkit for Business Analysts, featuring a User Story Agent, educational resources, and practical templates to enhance BA skills and productivity.</p> </div>
+<div align="center">
+  <img src="public/brand/ba-studio-uk-logo.svg" alt="BA Studio UK" width="200" />
+  <h1>BA Studio UK</h1>
+  <p>Practical AI tools and guidance for UK business analysts.</p>
+  <p><a href="https://bastudiouk.netlify.app">bastudiouk.netlify.app</a></p>
+</div>
 
-✨ Key Features
-BA Studio is an all-in-one platform designed to support Business Analysts in their day-to-day tasks and professional development.
+## Features
 
-🤖 User Story Agent: Leverage AI to analyze, score, and refine your user stories against industry best practices like INVEST.
+| Tool                  | Route              | What it does                                                                            |
+| --------------------- | ------------------ | --------------------------------------------------------------------------------------- |
+| User story agent      | `/agent`           | Analyses, scores and refines a user story against good practice such as INVEST.         |
+| Meeting assistant     | `/meeting`         | Generates a structured agenda, or summarises raw notes into decisions and actions.      |
+| Latest news           | `/news`            | Produces a weekly AI briefing on BA trends, tools and techniques.                       |
+| Competency assessment | `/assessment`      | Turns a self-assessment of five core competencies into a personalised development plan. |
+| Knowledge quiz        | `/quiz`            | Multiple-choice quiz on core BA concepts, with explanations.                            |
+| Core competencies     | `/competencies`    | Guide to fundamental BA skills, with links to further reading.                          |
+| Tools and templates   | `/templates`       | Templates such as BRDs and use cases. Download links are placeholders for now.          |
+| Recommendations       | `/recommendations` | Books, websites, podcasts, communities and people to follow.                            |
 
-🤝 Meeting Assistant: Generate structured meeting agendas and instantly summarize unstructured notes to extract key decisions and action items.
+The first four use Google Gemini through a Netlify function. The rest are static content.
 
-📰 Latest News & Briefings: Get a personalized, AI-powered weekly intelligence briefing on the latest BA trends, tools, and techniques.
+## Tech stack
 
-📊 Competency Assessment: Receive a personalized development plan from an AI coach based on your self-assessed skills in core BA competencies.
+- **Frontend:** [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Vite 7](https://vite.dev/), [React Router 7](https://reactrouter.com/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/), driven by the BA Studio UK design system (see [Design system](#design-system))
+- **Backend:** [Netlify Functions](https://docs.netlify.com/functions/overview/) (`netlify/functions/gemini.ts`)
+- **AI:** [Google Gemini API](https://ai.google.dev/) (`gemini-2.5-flash`) via `@google/genai`
+- **Rendering AI output:** `marked` for markdown, sanitised with `DOMPurify`
+- **Testing:** [Vitest](https://vitest.dev/) and React Testing Library
+- **Analytics:** Microsoft Clarity, injected into production builds only
 
-🧠 Knowledge Quiz: Test your understanding of fundamental BA concepts with an interactive, multiple-choice quiz.
+## Getting started
 
-📚 Core Competencies: Explore fundamental BA skills, from requirements elicitation to stakeholder management, with curated resources.
+### Prerequisites
 
-📋 Tools & Templates: Access a collection of downloadable templates for documents like BRDs and Use Cases to kickstart your work.
+- Node.js 22.16 or later, and npm 11 (see `engines` in `package.json`)
+- [Netlify CLI](https://docs.netlify.com/cli/get-started/), to run the AI function locally: `npm install -g netlify-cli`
+- A [Google Gemini API key](https://aistudio.google.com/apikey)
 
-💡 Curated Recommendations: Discover essential books, websites, podcasts, and industry leaders to follow for continuous learning.
+### Setup
 
-🛠️ Tech Stack
-Frontend:(https://react.dev/),(https://www.typescriptlang.org/,(https://www.typescriptlang.org/)), Vite,(https://tailwindcss.com/)
+1. Clone the repository and install dependencies:
 
-Backend: Netlify Functions
+   ```bash
+   git clone https://github.com/arsenal86/BA-Studio.git
+   cd BA-Studio
+   npm install
+   ```
 
-AI: Google Gemini API
+2. Create a `.env` file from the example and add your Gemini API key:
 
-🚀 Getting Started
-Follow these instructions to set up and run the project on your local machine for development and testing purposes.
+   ```bash
+   cp .env.example .env
+   ```
 
-Prerequisites
-Node.js (version 18 or higher is recommended)
+   `.env` is git-ignored. Never commit a real key.
 
-npm (comes with Node.js)
+3. Start the app with the function running:
 
-Installation & Setup
-**Clone the repository:**bash git clone https://github.com/your-username/ba-studio.git cd ba-studio
+   ```bash
+   netlify dev
+   ```
 
-Install dependencies:
+   Open http://localhost:8888. Netlify Dev serves the Gemini function and proxies the Vite dev server (port 3001).
 
-Bash
+   `npm run dev` starts the frontend on its own at http://localhost:3001. The pages load, but the AI tools fail because nothing is serving `/.netlify/functions/gemini`.
 
-npm install
-Set up environment variables:
+### Scripts
 
-Create a new file named .env in the root of the project.
+| Command            | Purpose                                     |
+| ------------------ | ------------------------------------------- |
+| `netlify dev`      | Run the app and the Gemini function locally |
+| `npm run dev`      | Run the frontend only                       |
+| `npm run build`    | Production build to `dist/`                 |
+| `npm run preview`  | Preview the production build                |
+| `npx vitest run`   | Run the tests                               |
+| `npx tsc --noEmit` | Type-check                                  |
+| `npm run lint`     | Lint with ESLint                            |
+| `npm run format`   | Format with Prettier                        |
 
-Add your Google Gemini API key to this file:
+## Design system
 
-GEMINI_API_KEY="YOUR_API_KEY_HERE"
-Important: The .env file contains sensitive credentials and should never be committed to version control. Ensure that .env is listed in your .gitignore file.
+All UI uses the **BA Studio UK** design system: https://claude.ai/artifact/T8dX7AjnDi1hPjActcJTa7
 
-Run the development server:
+- **Tokens:** `src/styles/tokens.css` holds the colour tokens for light (`:root`) and dark (`.dark`) themes. `src/index.css` maps them to Tailwind utilities such as `bg-surface-100`, `text-ink` and `text-brand-navy`. **Tailwind's default palette is switched off**, so classes like `bg-slate-100` produce no styles.
+- **Components:** shared UI lives in `components/ui/`: Button, Card, PageHeader, Input, Textarea, Alert, Spinner, Modal, SegmentedControl, Tag and MarkdownOutput. Use these before writing new markup.
+- **Type:** Montserrat, with a type scale from `text-display` to `text-label`.
+- **Copy:** plain UK English, with sentence case for headings and buttons.
 
-Bash
+[`CLAUDE.md`](CLAUDE.md) has the full rules.
 
-npm run dev
-The application will be available at http://localhost:3000.
+## The Gemini function
 
-☁️ Deployment
-This project is configured for seamless deployment to Netlify.
+The browser never sees the API key. All AI calls go through one Netlify function, `netlify/functions/gemini.ts`, which:
 
-Connect your repository to Netlify:
+- accepts a `POST` with a `mode` (`analyzeUserStory`, `generateMeetingAgenda`, `summarizeMeetingNotes`, `generateDevelopmentPlan` or `generateWeeklyBriefing`) and that mode's parameters
+- validates input before calling Gemini, returning `400` for missing, malformed or oversized input (user stories are capped at 5,000 characters)
+- returns a generic `500` message on failure, and logs the details on the server only
 
-Push your code to a GitHub, GitLab, or Bitbucket repository.
+It reads the key from `GEMINI_API_KEY`, falling back to `API_KEY`.
 
-In the Netlify dashboard, create a "New site from Git" and select your repository.
+## Deployment
 
-Configure build settings:
+The site deploys to Netlify. `netlify.toml` sets the build:
 
-Netlify should automatically detect the settings from the netlify.toml file:
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Functions directory: `netlify/functions`
+- A catch-all redirect to `index.html`, so client-side routes work on refresh
 
-Build command: npm run build
+Under **Site configuration › Environment variables** in Netlify, set `GEMINI_API_KEY` to your key. Each pull request gets a deploy preview.
 
-Publish directory: dist
+> Netlify deploys **every file** in `netlify/functions/` as a function. Keep tests and helpers out of that folder. The function tests live in `src/test/geminiFunction.test.ts`.
 
-Functions directory: netlify/functions
+## Project structure
 
-Add environment variables:
-
-In your Netlify site's settings, go to Site configuration > Environment variables.
-
-Add a new variable with the key GEMINI_API_KEY and paste your secret API key as the value. This ensures your key is securely available to the serverless function in the production environment.
-
-Deploy:
-
-Trigger a deploy. Netlify will build the project and deploy the site and serverless functions.
-
-📂 Project Structure
+```
 /
-├── netlify/
-│ └── functions/
-│ └── gemini.ts # Serverless function to handle Gemini API calls
-├── public/ # Static assets
+├── App.tsx                  # App shell, theme toggle and routes
+├── components/
+│   ├── ui/                  # Design-system components (Button, Card, Modal…)
+│   ├── BrandLogo.tsx        # Logo (light) and wordmark (dark)
+│   ├── Sidebar.tsx, Footer.tsx, FeatureCard.tsx, GuidanceModal.tsx
+│   └── icons.tsx            # Line icons
+├── pages/                   # One component per route, plus NotFoundPage
+├── netlify/functions/
+│   └── gemini.ts            # Serverless function for all Gemini calls
+├── public/
+│   ├── brand/               # Logo from the design system
+│   └── favicon.svg
 ├── src/
-│ ├── components/ # Reusable React components (Sidebar, Footer, etc.)
-│ ├── pages/ # Page components for each feature
-│ ├── test/ # Test files
-│ ├── App.tsx # Main application component and routing logic
-│ ├── main.tsx # Application entry point
-│ ├── index.css # Tailwind v4 entry: token mapping, type scale, markdown styles
-│ └── styles/tokens.css # BA Studio UK design tokens (light and dark)
-├──.env.example # Example environment file
-├──.gitignore # Files to be ignored by Git
-├── index.html # Main HTML entry file
-├── netlify.toml # Netlify deployment configuration
-├── package.json # Project dependencies and scripts
-└── vite.config.ts # Vite configuration
+│   ├── main.tsx             # Entry point (BrowserRouter)
+│   ├── index.css            # Tailwind entry: token mapping, type scale, markdown styles
+│   ├── styles/tokens.css    # Design tokens (light and dark)
+│   └── test/                # Vitest tests
+├── types.ts
+├── index.html
+├── netlify.toml
+├── vite.config.ts
+├── vitest.config.ts
+├── CLAUDE.md                # Guidance for AI-assisted changes
+└── .env.example
+```
